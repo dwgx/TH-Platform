@@ -23,9 +23,9 @@ const games = [
 export function Rail({ page, onNavigate }: RailProps) {
   return (
     <TooltipProvider delayDuration={300}>
-      <aside className="flex w-[64px] flex-col items-center gap-1.5 border-r bg-sidebar/70 py-3 backdrop-blur-xl">
+      <aside className="flex w-[60px] flex-col items-center gap-1.5 border-r bg-sidebar py-2.5">
         <Tile
-          glyph="TH"
+          glyph="H"
           label="Home"
           variant="brand"
           active={page === 'lobby'}
@@ -41,11 +41,7 @@ export function Rail({ page, onNavigate }: RailProps) {
             current={g.current}
           />
         ))}
-        <Tile
-          glyph={<Plus className="h-4 w-4" />}
-          label="Add server"
-          variant="add"
-        />
+        <Tile glyph={<Plus className="h-4 w-4" />} label="Add server" variant="add" />
 
         <div className="flex-1" />
 
@@ -67,9 +63,7 @@ export function Rail({ page, onNavigate }: RailProps) {
 }
 
 function Divider() {
-  return (
-    <div className="my-1 h-px w-7 bg-gradient-to-r from-transparent via-border to-transparent" />
-  );
+  return <div className="my-1 h-px w-6 rounded-full bg-border" />;
 }
 
 interface TileProps {
@@ -96,29 +90,28 @@ function Tile({
           onClick={onClick}
           aria-label={label}
           className={cn(
-            'group relative grid h-11 w-11 place-items-center rounded font-mono text-[11px] font-bold uppercase tracking-wider transition-all duration-200',
+            'group relative grid h-10 w-10 place-items-center rounded-[11px] font-mono text-[11.5px] font-semibold transition-all',
             variant === 'brand' &&
-              'bg-gradient-to-br from-plasma to-arc text-white ring-1 ring-plasma/30 shadow-[0_4px_16px_-4px_hsl(var(--plasma)/0.6)] hover:shadow-[0_4px_24px_-4px_hsl(var(--plasma)/0.85)]',
+              'bg-primary/15 text-primary ring-1 ring-primary/25 hover:rounded-[13px] hover:bg-primary/20',
             variant === 'game' &&
-              'bg-card-elev text-muted-foreground border border-border/50 hover:border-plasma/40 hover:text-foreground hover:bg-card',
+              'bg-secondary text-muted-foreground hover:rounded-[13px] hover:bg-muted hover:text-foreground',
             variant === 'add' &&
-              'border border-dashed border-border bg-transparent text-muted-foreground hover:border-plasma hover:text-plasma hover:bg-plasma/5',
+              'border border-dashed border-border bg-transparent text-muted-foreground hover:border-primary hover:text-primary',
             variant === 'ghost' &&
-              'bg-transparent text-muted-foreground hover:bg-card-elev hover:text-foreground',
-            active && variant === 'ghost' && 'bg-card-elev text-foreground',
-            current && 'border-plasma/50 text-foreground bg-card',
+              'bg-transparent text-muted-foreground hover:rounded-[11px] hover:bg-muted hover:text-foreground',
+            active && 'bg-secondary text-foreground',
           )}
         >
           {current && (
             <span
               aria-hidden
-              className="absolute -left-3 top-1/2 h-7 w-[3px] -translate-y-1/2 rounded-r-full bg-plasma shadow-[0_0_10px_hsl(var(--plasma)/0.85)]"
+              className="absolute -left-2.5 top-1.5 h-7 w-[3px] rounded-r-full bg-primary shadow-[0_0_8px_rgba(110,131,245,0.6)]"
             />
           )}
           {glyph}
         </button>
       </TooltipTrigger>
-      <TooltipContent side="right" className="font-mono text-[10.5px] uppercase tracking-wider">
+      <TooltipContent side="right" className="text-[11px]">
         {label}
       </TooltipContent>
     </Tooltip>

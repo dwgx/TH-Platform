@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronRight, Plus, Send, Share2, Smile } from 'lucide-react';
+import { ChevronRight, Plus, Send, Smile, Share2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -17,61 +17,57 @@ export function ChatRail({ collapsed, onToggle }: ChatRailProps) {
 
   if (collapsed) {
     return (
-      <aside className="flex w-[44px] flex-col items-center border-l bg-sidebar/60 py-3 backdrop-blur-xl">
+      <aside className="flex w-[42px] flex-col items-center border-l bg-sidebar/60 py-2">
         <button
           onClick={onToggle}
           aria-label="Expand chat"
-          className="grid h-8 w-8 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
           <ChevronRight className="h-3.5 w-3.5 rotate-180" />
         </button>
-        <div className="my-2 h-px w-6 bg-border" />
-        <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.22em] text-muted-foreground [writing-mode:vertical-rl]">
-          chat
-        </span>
+        <div className="mt-2 h-px w-6 bg-border" />
+        <div className="mt-2 flex flex-col gap-1.5">
+          <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground [writing-mode:vertical-rl]">
+            chat
+          </span>
+        </div>
       </aside>
     );
   }
 
   return (
-    <aside className="relative flex w-[336px] flex-col border-l bg-sidebar/60 backdrop-blur-xl">
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-foreground/8 to-transparent" />
-
-      <Tabs
-        value={tab}
-        onValueChange={setTab}
-        className="flex flex-1 flex-col min-h-0"
-      >
-        <div className="flex items-center justify-between border-b px-2.5 py-2">
-          <TabsList className="bg-transparent p-0 gap-0.5">
-            <RailTab value="lobby">Lobby</RailTab>
-            <RailTab value="friends" badge="2">
+    <aside className="flex w-[320px] flex-col border-l bg-sidebar/60">
+      <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col min-h-0">
+        <div className="flex items-center justify-between border-b px-2 py-1.5">
+          <TabsList className="bg-transparent p-0">
+            <TabsTrigger value="lobby">Lobby</TabsTrigger>
+            <TabsTrigger value="friends" className="gap-1.5">
               Friends
-            </RailTab>
-            <RailTab value="room">Room</RailTab>
+              <span className="grid h-4 min-w-4 place-items-center rounded-full bg-destructive px-1 text-[9.5px] font-bold text-destructive-foreground">
+                2
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="room">Room</TabsTrigger>
           </TabsList>
           <button
             onClick={onToggle}
             aria-label="Collapse chat"
-            className="grid h-7 w-7 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <div className="border-b bg-background/30 px-3.5 py-2.5">
-          <div className="flex items-center gap-1.5 font-display text-[12.5px] font-bold tracking-tight">
-            <span className="font-mono text-muted-foreground">#</span>
-            lobby-th08
-          </div>
-          <div className="mt-0.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-muted-foreground">
-            47 ONLINE · TYPE / FOR COMMANDS
+        <div className="border-b bg-background/20 px-3.5 py-2">
+          <div className="text-[12.5px] font-semibold">#lobby-th08</div>
+          <div className="font-mono text-[10.5px] text-muted-foreground">
+            47 online · type / for commands
           </div>
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="flex flex-col gap-3 px-3 py-3">
-            <div className="self-center rounded-full border border-border bg-card-elev px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="flex flex-col gap-2.5 px-3 py-3">
+            <div className="self-center rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
               Today
             </div>
 
@@ -80,13 +76,14 @@ export function ChatRail({ collapsed, onToggle }: ChatRailProps) {
                 const room = rooms.find((r) => r.id === m.embedRoomId);
                 return (
                   <div key={m.id} className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-1.5 px-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    <div className="flex items-center gap-1.5 px-1 text-[11px] text-muted-foreground">
                       <Share2 className="h-3 w-3" />
-                      <span>sakuya shared #{m.embedRoomId}</span>
+                      <span>
+                        sakuya shared a room — #{m.embedRoomId}
+                      </span>
                     </div>
                     {room && (
                       <RoomEmbed
-                        cover={room.cover}
                         title={room.name}
                         meta={`${room.game} · ${room.pingMs}ms · ${room.players.length}/${room.capacity}`}
                       />
@@ -98,20 +95,20 @@ export function ChatRail({ collapsed, onToggle }: ChatRailProps) {
                 <div
                   key={m.id}
                   className={cn(
-                    'group -mx-2 flex gap-2.5 rounded px-2 py-1 transition-colors hover:bg-accent/30',
+                    'group -mx-2 flex gap-2.5 rounded-md px-2 py-0.5 transition-colors hover:bg-accent/40',
                     m.hasMention &&
-                      'bg-plasma/[0.08] border-l-2 border-l-plasma pl-2',
+                      'bg-primary/[0.06] border-l-2 border-l-primary pl-1.5',
                   )}
                 >
-                  <Avatar className="mt-0.5 h-7 w-7 shrink-0 ring-1 ring-border">
+                  <Avatar className="mt-0.5 h-7 w-7 shrink-0">
                     <AvatarFallback name={m.author ?? '?'} />
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2">
-                      <span className="font-display text-[12.5px] font-bold text-foreground">
+                      <span className="text-[12.5px] font-semibold text-foreground">
                         {m.author}
                       </span>
-                      <span className="font-mono text-[9.5px] uppercase tracking-wider text-muted-foreground/70">
+                      <span className="font-mono text-[10px] text-muted-foreground/70">
                         {m.time}
                       </span>
                     </div>
@@ -120,7 +117,7 @@ export function ChatRail({ collapsed, onToggle }: ChatRailProps) {
                       dangerouslySetInnerHTML={{
                         __html: (m.text ?? '').replace(
                           /(@\w+)/g,
-                          '<span class="rounded bg-plasma/15 px-1 font-medium text-plasma">$1</span>',
+                          '<span class="rounded bg-primary/15 px-1 font-medium text-primary">$1</span>',
                         ),
                       }}
                     />
@@ -131,8 +128,8 @@ export function ChatRail({ collapsed, onToggle }: ChatRailProps) {
           </div>
         </ScrollArea>
 
-        <div className="border-t bg-background/30 p-2">
-          <div className="flex items-center gap-1 rounded-md border border-border bg-background/50 px-2 py-1 transition-colors focus-within:border-plasma focus-within:ring-2 focus-within:ring-plasma/20">
+        <div className="border-t bg-background/20 p-2">
+          <div className="flex items-center gap-1 rounded-lg border bg-background/60 px-2 py-1 transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
             <input
               type="text"
               placeholder="Message #lobby-th08"
@@ -144,16 +141,13 @@ export function ChatRail({ collapsed, onToggle }: ChatRailProps) {
             <Button variant="ghost" size="icon-sm" aria-label="Share room">
               <Plus />
             </Button>
-            <button
-              aria-label="Send"
-              className="grid h-7 w-7 place-items-center rounded bg-plasma text-white shadow-[0_2px_8px_-2px_hsl(var(--plasma)/0.6)] transition-colors hover:bg-plasma/90 active:scale-95"
-            >
-              <Send className="h-3.5 w-3.5" />
-            </button>
+            <Button size="icon-sm" aria-label="Send">
+              <Send />
+            </Button>
           </div>
-          <div className="mt-1.5 px-1 font-mono text-[9.5px] uppercase tracking-wider text-muted-foreground/70">
-            TEXT & EMOJI · <kbd className="rounded border border-border bg-card px-1 font-mono">/</kbd> CMD ·{' '}
-            <kbd className="rounded border border-border bg-card px-1 font-mono">↵</kbd> SEND
+          <div className="mt-1 px-1 text-[10.5px] text-muted-foreground/70">
+            Text & emoji only · <kbd className="font-mono">/</kbd> commands ·{' '}
+            <kbd className="font-mono">↵</kbd> send
           </div>
         </div>
       </Tabs>
@@ -161,69 +155,20 @@ export function ChatRail({ collapsed, onToggle }: ChatRailProps) {
   );
 }
 
-function RailTab({
-  value,
-  children,
-  badge,
-}: {
-  value: string;
-  children: React.ReactNode;
-  badge?: string;
-}) {
+function RoomEmbed({ title, meta }: { title: string; meta: string }) {
   return (
-    <TabsTrigger
-      value={value}
-      className={cn(
-        'gap-1.5 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-[0.14em]',
-        'data-[state=active]:bg-card-elev data-[state=active]:text-foreground',
-      )}
-    >
-      {children}
-      {badge && (
-        <span className="grid h-3.5 min-w-3.5 place-items-center rounded-full bg-rose px-1 font-mono text-[9px] font-bold text-white">
-          {badge}
-        </span>
-      )}
-    </TabsTrigger>
-  );
-}
-
-function RoomEmbed({
-  title,
-  meta,
-  cover,
-}: {
-  title: string;
-  meta: string;
-  cover: string;
-}) {
-  const meshClass: Record<string, string> = {
-    aurora: 'bg-mesh-1',
-    midnight: 'bg-mesh-2',
-    twilight: 'bg-mesh-4',
-    dawn: 'bg-mesh-3',
-    glacier: 'bg-mesh-5',
-    amber: 'bg-mesh-6',
-  };
-  return (
-    <div className="overflow-hidden rounded-md border border-border bg-card bevel-edge">
-      <div className={cn('relative h-12', meshClass[cover] ?? 'bg-mesh-1')}>
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,rgba(0,0,0,0.6)_100%)]" />
-        <div className="absolute bottom-1 left-2 font-mono text-[9px] uppercase tracking-[0.18em] text-white/85">
-          ROOM SHARE
-        </div>
+    <div className="overflow-hidden rounded-lg border bg-card">
+      <div className="relative h-7 bg-[linear-gradient(135deg,#1A1F38_0%,#2C2B5A_100%)]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_75%_25%,rgba(133,151,247,0.40),transparent_60%)]" />
       </div>
       <div className="space-y-1.5 p-2.5">
-        <div className="font-display text-[12.5px] font-semibold leading-tight">
-          {title}
-        </div>
-        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+        <div className="text-[12.5px] font-semibold">{title}</div>
+        <div className="font-mono text-[10.5px] text-muted-foreground">
           {meta}
         </div>
-        <button className="mt-1 inline-flex h-6 items-center gap-1.5 rounded-sm bg-gradient-to-b from-plasma to-plasma/80 px-2.5 font-display text-[10px] font-bold uppercase tracking-[0.14em] text-white ring-1 ring-plasma/30 hover:from-plasma hover:to-plasma/95">
+        <Button size="sm" className="mt-1 h-6 px-2.5 text-[11px]">
           Join
-          <span className="font-mono">→</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

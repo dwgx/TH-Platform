@@ -4,77 +4,66 @@
 
 @layer base {
   :root {
-    /* ─── Light — cream-paper "after-midnight at noon" ─── */
-    --background: 36 25% 95%;
-    --foreground: 250 35% 10%;
+    /* Light theme — Claude Code-style neutral, white-paper feel */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 250 35% 10%;
-    --card-elev: 250 20% 98%;
+    --card-foreground: 240 10% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 250 35% 10%;
-    --primary: 251 100% 64%;
+    --popover-foreground: 240 10% 8%;
+    --primary: 232 84% 64%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 250 14% 92%;
-    --secondary-foreground: 250 35% 12%;
-    --muted: 250 10% 92%;
-    --muted-foreground: 250 8% 42%;
-    --accent: 250 14% 90%;
-    --accent-foreground: 250 35% 12%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 10% 12%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 42%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 10% 12%;
     --destructive: 0 75% 56%;
     --destructive-foreground: 0 0% 100%;
-    --success: 152 65% 38%;
-    --warning: 35 95% 50%;
-    --border: 250 14% 86%;
-    --input: 250 14% 86%;
-    --ring: 251 100% 64%;
-    --sidebar: 250 18% 96%;
-    --sidebar-foreground: 250 35% 10%;
-    --plasma: 251 100% 64%;
-    --arc: 187 90% 48%;
-    --ember: 35 95% 52%;
-    --rose: 348 90% 58%;
+    --success: 142 65% 38%;
+    --warning: 35 90% 48%;
+    --border: 240 6% 90%;
+    --input: 240 6% 88%;
+    --ring: 232 84% 64%;
+    --sidebar: 240 6% 98%;
+    --sidebar-foreground: 240 10% 8%;
     --radius: 0.625rem;
 
-    --font-display: 'Chakra Petch', 'Bruno Ace SC', 'Space Grotesk',
-      'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
-    --font-body:
-      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    --font-sans:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI',
       'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui,
       sans-serif;
     --font-mono:
-      'JetBrains Mono', 'SF Mono', 'Sarasa Mono SC', ui-monospace, monospace;
+      'SF Mono', 'JetBrains Mono', Consolas, 'Sarasa Mono SC', ui-monospace,
+      monospace;
   }
 
   .dark {
-    /* ─── Dark — after-midnight arcade, neon under glass ─── */
-    --background: 250 30% 5%;
-    --foreground: 250 25% 96%;
-    --card: 250 22% 9%;
-    --card-foreground: 250 25% 96%;
-    --card-elev: 250 18% 14%;
-    --popover: 250 22% 11%;
-    --popover-foreground: 250 25% 96%;
-    --primary: 251 100% 72%;
-    --primary-foreground: 250 30% 5%;
-    --secondary: 250 18% 16%;
-    --secondary-foreground: 250 25% 96%;
-    --muted: 250 14% 18%;
-    --muted-foreground: 250 12% 64%;
-    --accent: 250 16% 18%;
-    --accent-foreground: 250 25% 96%;
-    --destructive: 0 65% 58%;
+    /* Dark theme — Claude Code-style neutral, deep but not pitch black */
+    --background: 240 8% 6%;
+    --foreground: 0 0% 96%;
+    --card: 240 7% 9%;
+    --card-foreground: 0 0% 96%;
+    --popover: 240 7% 11%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 232 86% 72%;
+    --primary-foreground: 240 10% 8%;
+    --secondary: 240 5% 14%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 240 5% 14%;
+    --muted-foreground: 240 5% 62%;
+    --accent: 240 5% 14%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
-    --success: 152 65% 52%;
-    --warning: 35 100% 60%;
-    --border: 250 18% 15%;
-    --input: 250 18% 15%;
-    --ring: 251 100% 72%;
-    --sidebar: 250 26% 6%;
-    --sidebar-foreground: 250 25% 96%;
-    --plasma: 251 100% 72%;
-    --arc: 187 100% 60%;
-    --ember: 35 100% 64%;
-    --rose: 348 95% 64%;
+    --success: 142 60% 50%;
+    --warning: 35 90% 60%;
+    --border: 240 5% 16%;
+    --input: 240 5% 16%;
+    --ring: 232 86% 72%;
+    --sidebar: 240 7% 7%;
+    --sidebar-foreground: 0 0% 96%;
   }
 
   * {
@@ -88,88 +77,30 @@
   }
 
   body {
-    color: hsl(var(--foreground));
-    background-color: hsl(var(--background));
-    font-family: var(--font-body);
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
     font-feature-settings:
       'rlig' 1,
-      'calt' 1,
-      'ss01' 1;
+      'calt' 1;
     overflow: hidden;
-    position: relative;
   }
 
-  /* Atmospheric body backdrop — gradient mesh + faint corner bleed.
-     Sits behind everything, never hovers over interactive content. */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    pointer-events: none;
-    background:
-      radial-gradient(
-        ellipse 70% 60% at 100% -10%,
-        hsl(var(--plasma) / 0.18),
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse 60% 50% at -10% 100%,
-        hsl(var(--arc) / 0.10),
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse 40% 30% at 50% 50%,
-        hsl(var(--ember) / 0.04),
-        transparent 70%
-      );
-  }
-
-  /* Ultra-fine grain texture — adds tactile feel without being noisy.
-     Pure SVG, GPU-cheap, dark-mode only (light mode reads cleaner without). */
-  .dark body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.35;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /* Display font for headings + tactical UI labels */
-  h1,
-  h2,
-  h3,
-  .font-display {
-    font-family: var(--font-display);
-    letter-spacing: -0.005em;
-  }
-
-  /* Scrollbar — thin chrome-like */
+  /* Scrollbar polish */
   ::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 999px;
+    @apply bg-border rounded-full;
     border: 2px solid transparent;
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.4);
+    @apply bg-muted-foreground/40;
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
-  }
-
-  /* Selection — plasma glow */
-  ::selection {
-    background: hsl(var(--plasma) / 0.30);
-    color: hsl(var(--foreground));
   }
 }
 
@@ -182,136 +113,5 @@
   }
   .font-mono {
     font-family: var(--font-mono);
-  }
-  .font-display {
-    font-family: var(--font-display);
-  }
-
-  /* "Inscribed" — tiny industrial corner-clip detail.
-     Cuts a 45° corner via clip-path. Use sparingly on cards/buttons that
-     should feel like equipment plates rather than soft UI cards. */
-  .clip-corner {
-    clip-path: polygon(
-      0 0,
-      calc(100% - 12px) 0,
-      100% 12px,
-      100% 100%,
-      12px 100%,
-      0 calc(100% - 12px)
-    );
-  }
-  .clip-corner-sm {
-    clip-path: polygon(
-      0 0,
-      calc(100% - 8px) 0,
-      100% 8px,
-      100% 100%,
-      8px 100%,
-      0 calc(100% - 8px)
-    );
-  }
-
-  /* Tactile bevel — thin top-edge highlight that gives plate / chrome feel */
-  .bevel-top {
-    box-shadow: inset 0 1px 0 hsl(var(--foreground) / 0.06);
-  }
-  .bevel-edge {
-    box-shadow:
-      inset 0 1px 0 hsl(var(--foreground) / 0.07),
-      inset 0 -1px 0 hsl(0 0% 0% / 0.25);
-  }
-
-  /* Sodium-arc glow — bright cyan halo for live / online indicators */
-  .glow-arc {
-    box-shadow:
-      0 0 0 2px hsl(var(--arc) / 0.15),
-      0 0 12px hsl(var(--arc) / 0.55);
-  }
-  .glow-plasma {
-    box-shadow:
-      0 0 0 2px hsl(var(--plasma) / 0.15),
-      0 0 16px hsl(var(--plasma) / 0.45);
-  }
-  .glow-ember {
-    box-shadow:
-      0 0 0 2px hsl(var(--ember) / 0.15),
-      0 0 14px hsl(var(--ember) / 0.50);
-  }
-}
-
-/* Keyframes — used by Tailwind animation utilities */
-@keyframes led-flicker {
-  0%,
-  92%,
-  100% {
-    opacity: 1;
-  }
-  93% {
-    opacity: 0.55;
-  }
-  95% {
-    opacity: 1;
-  }
-  97% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes sweep {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(200%);
-  }
-}
-
-@keyframes mesh-drift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(2%, -1%) scale(1.04);
-  }
-}
-
-@keyframes pulse-soft {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(1.5);
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes accordion-down {
-  from {
-    height: 0;
-  }
-  to {
-    height: var(--radix-accordion-content-height);
-  }
-}
-@keyframes accordion-up {
-  from {
-    height: var(--radix-accordion-content-height);
-  }
-  to {
-    height: 0;
   }
 }

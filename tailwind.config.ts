@@ -39,6 +39,7 @@ const config: Config = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
+          elev: 'hsl(var(--card-elev))',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
@@ -50,6 +51,10 @@ const config: Config = {
           DEFAULT: 'hsl(var(--sidebar))',
           foreground: 'hsl(var(--sidebar-foreground))',
         },
+        plasma: 'hsl(var(--plasma))',
+        arc: 'hsl(var(--arc))',
+        ember: 'hsl(var(--ember))',
+        rose: 'hsl(var(--rose))',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -57,32 +62,38 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: 'var(--font-sans)',
-        mono: 'var(--font-mono)',
-      },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-        'pulse-soft': {
-          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
-          '50%': { opacity: '0.4', transform: 'scale(1.4)' },
-        },
-        'fade-in': {
-          from: { opacity: '0', transform: 'translateY(2px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
+        display: ['var(--font-display)'],
+        sans: ['var(--font-body)'],
+        mono: ['var(--font-mono)'],
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-soft': 'pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'fade-in': 'fade-in 0.2s ease-out',
+        'fade-in': 'fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) backwards',
+        'led-flicker': 'led-flicker 4s linear infinite',
+        sweep: 'sweep 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite',
+        'mesh-drift': 'mesh-drift 22s ease-in-out infinite',
+      },
+      backgroundImage: {
+        'mesh-1':
+          'radial-gradient(ellipse 70% 80% at 80% 30%, hsl(var(--plasma) / 0.55), transparent 60%), radial-gradient(ellipse 60% 70% at 20% 80%, hsl(var(--arc) / 0.30), transparent 60%), linear-gradient(135deg, #1A1325 0%, #0E1230 100%)',
+        'mesh-2':
+          'radial-gradient(ellipse 60% 80% at 70% 30%, hsl(var(--arc) / 0.45), transparent 55%), radial-gradient(ellipse 60% 60% at 30% 80%, hsl(var(--plasma) / 0.35), transparent 55%), linear-gradient(135deg, #0F1928 0%, #0A1224 100%)',
+        'mesh-3':
+          'radial-gradient(ellipse 60% 80% at 80% 25%, hsl(var(--ember) / 0.40), transparent 55%), radial-gradient(ellipse 50% 70% at 20% 90%, hsl(var(--rose) / 0.25), transparent 60%), linear-gradient(135deg, #1F1813 0%, #271D14 100%)',
+        'mesh-4':
+          'radial-gradient(ellipse 70% 80% at 75% 30%, hsl(var(--rose) / 0.35), transparent 55%), radial-gradient(ellipse 50% 60% at 25% 85%, hsl(var(--plasma) / 0.30), transparent 60%), linear-gradient(135deg, #1E1320 0%, #14122A 100%)',
+        'mesh-5':
+          'radial-gradient(ellipse 60% 70% at 80% 30%, hsl(var(--success) / 0.35), transparent 55%), radial-gradient(ellipse 60% 70% at 20% 80%, hsl(var(--arc) / 0.25), transparent 60%), linear-gradient(135deg, #0E1A1F 0%, #0A1418 100%)',
+        'mesh-6':
+          'radial-gradient(ellipse 70% 80% at 70% 30%, hsl(var(--ember) / 0.45), transparent 55%), radial-gradient(ellipse 60% 50% at 25% 90%, hsl(var(--warning) / 0.20), transparent 60%), linear-gradient(135deg, #1F1A12 0%, #2A1F0E 100%)',
+        'chrome':
+          'linear-gradient(180deg, hsl(var(--foreground) / 0.04) 0%, transparent 50%, hsl(var(--foreground) / 0.02) 100%)',
+        'plate':
+          'linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--card-elev)) 100%)',
+        'stripe-empty':
+          'repeating-linear-gradient(45deg, hsl(var(--muted)), hsl(var(--muted)) 4px, hsl(var(--card)) 4px, hsl(var(--card)) 8px)',
       },
     },
   },

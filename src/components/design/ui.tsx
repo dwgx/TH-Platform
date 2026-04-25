@@ -1,0 +1,468 @@
+// Base UI primitives — Button, Card, Avatar, Badge, Input.
+// Soft, rounded, no metallic / bevel / chrome. Styled via inline styles
+// + CSS variables defined in src/styles/design.css.
+
+import {
+  useState,
+  type ButtonHTMLAttributes,
+  type CSSProperties,
+  type ChangeEventHandler,
+  type InputHTMLAttributes,
+  type ReactNode,
+} from 'react';
+
+// ---------- Button ----------
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'soft';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'style'> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  icon?: ReactNode;
+  style?: CSSProperties;
+};
+
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  icon,
+  children,
+  onClick,
+  className = '',
+  style = {},
+  ...rest
+}: ButtonProps) {
+  const sizes: Record<ButtonSize, { h: number; px: number; fs: number; gap: number }> = {
+    sm: { h: 28, px: 10, fs: 12.5, gap: 6 },
+    md: { h: 36, px: 14, fs: 13.5, gap: 8 },
+    lg: { h: 42, px: 18, fs: 14.5, gap: 10 },
+  };
+  const s = sizes[size];
+  const variants: Record<ButtonVariant, CSSProperties> = {
+    primary: {
+      background:
+        'linear-gradient(180deg, var(--brand) 0%, color-mix(in oklab, var(--brand) 86%, #000 14%) 100%)',
+      color: '#fff',
+      boxShadow: '0 1px 0 rgba(255,255,255,0.10) inset, 0 4px 14px var(--brand-soft)',
+      border: '1px solid color-mix(in oklab, var(--brand) 60%, #000 40%)',
+    },
+    secondary: {
+      background: 'var(--bg-2)',
+      color: 'var(--fg-0)',
+      border: '1px solid var(--border-strong)',
+    },
+    ghost: {
+      background: 'transparent',
+      color: 'var(--fg-1)',
+      border: '1px solid transparent',
+    },
+    soft: {
+      background: 'var(--brand-soft)',
+      color: 'var(--brand)',
+      border: '1px solid transparent',
+    },
+  };
+  return (
+    <button
+      onClick={onClick}
+      className={className}
+      style={{
+        height: s.h,
+        paddingInline: s.px,
+        fontSize: s.fs,
+        gap: s.gap,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 600,
+        fontFamily: 'var(--font-thp-sans)',
+        borderRadius: 'var(--r-md)',
+        cursor: 'pointer',
+        whiteSpace: 'nowrap',
+        transition: 'transform .15s ease, filter .15s ease, background .15s ease',
+        ...variants[variant],
+        ...style,
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget;
+        el.style.filter = variant === 'ghost' ? 'none' : 'brightness(1.06)';
+        if (variant === 'ghost') el.style.background = 'var(--hover)';
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget;
+        el.style.filter = 'none';
+        if (variant === 'ghost') el.style.background = 'transparent';
+      }}
+      {...rest}
+    >
+      {icon ? (
+        <span style={{ display: 'inline-flex', width: s.fs + 2, height: s.fs + 2 }}>
+          {icon}
+        </span>
+      ) : null}
+      {children}
+    </button>
+  );
+}
+
+// ---------- Avatar ----------
+type AvatarStatus = 'online' | 'away' | 'dnd' | 'offline';
+
+type AvatarProps = {
+  size?: number;
+  src?: string;
+  name?: string;
+  status?: AvatarStatus;
+  ring?: number;
+  ringColor?: string;
+  style?: CSSProperties;
+};
+
+export function Avatar({
+  size = 32,
+  src,
+  name = '?',
+  status,
+  ring,
+  ringColor,
+  style = {},
+}: AvatarProps) {
+  const initials = name.slice(0, 2);
+  const dotSize = size <= 24 ? 7 : size <= 36 ? 9 : 11;
+  const dotColor =
+    status === 'online'
+      ? 'var(--success)'
+      : status === 'away'
+        ? 'var(--warning)'
+        : status === 'dnd'
+          ? 'var(--danger)'
+          : 'var(--fg-3)';
+  return (
+    <span
+      style={{
+        position: 'relative',
+        display: 'inline-block',
+        width: size,
+        height: size,
+        ...style,
+      }}
+    >
+      <span
+        style={{
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          background: src
+            ? `url(${src}) center/cover`
+            : 'linear-gradient(135deg, var(--brand) 0%, #4FD1C5 100%)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontWeight: 700,
+          fontSize: size * 0.38,
+          boxShadow: ring
+            ? `0 0 0 2px var(--bg-1), 0 0 0 ${ring}px ${ringColor || 'var(--brand-ring)'}`
+            : 'none',
+          fontFamily: 'var(--font-thp-sans)',
+        }}
+      >
+        {!src && initials}
+      </span>
+      {status ? (
+        <span
+          style={{
+            position: 'absolute',
+            right: -1,
+            bottom: -1,
+            width: dotSize + 4,
+            height: dotSize + 4,
+            background: 'var(--bg-1)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span
+            style={{
+              width: dotSize,
+              height: dotSize,
+              background: dotColor,
+              borderRadius: '50%',
+            }}
+          />
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+// ---------- Badge ----------
+type BadgeTone = 'neutral' | 'brand' | 'success' | 'warning' | 'danger';
+
+type BadgeProps = {
+  tone?: BadgeTone;
+  children?: ReactNode;
+  dot?: boolean;
+  style?: CSSProperties;
+};
+
+export function Badge({ tone = 'neutral', children, dot, style = {} }: BadgeProps) {
+  const tones: Record<BadgeTone, { bg: string; fg: string }> = {
+    neutral: { bg: 'var(--bg-3)', fg: 'var(--fg-1)' },
+    brand: { bg: 'var(--brand-soft)', fg: 'var(--brand)' },
+    success: { bg: 'rgba(74,222,128,0.14)', fg: 'var(--success)' },
+    warning: { bg: 'rgba(245,181,68,0.14)', fg: 'var(--warning)' },
+    danger: { bg: 'rgba(248,113,113,0.14)', fg: 'var(--danger)' },
+  };
+  const t = tones[tone];
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        paddingInline: 9,
+        height: 22,
+        borderRadius: 999,
+        fontSize: 11.5,
+        fontWeight: 600,
+        letterSpacing: '0.005em',
+        background: t.bg,
+        color: t.fg,
+        fontFamily: 'var(--font-thp-sans)',
+        ...style,
+      }}
+    >
+      {dot ? (
+        <span
+          style={{ width: 6, height: 6, borderRadius: '50%', background: t.fg }}
+        />
+      ) : null}
+      {children}
+    </span>
+  );
+}
+
+// ---------- Card ----------
+type CardProps = {
+  children?: ReactNode;
+  padded?: boolean;
+  style?: CSSProperties;
+  hover?: boolean;
+  onClick?: () => void;
+};
+
+export function Card({
+  children,
+  padded = true,
+  style = {},
+  hover = false,
+  onClick,
+}: CardProps) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        background: 'var(--bg-1)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--r-lg)',
+        boxShadow: 'var(--shadow-sm)',
+        padding: padded ? 16 : 0,
+        transition:
+          'transform .18s ease, box-shadow .18s ease, border-color .18s ease',
+        cursor: onClick ? 'pointer' : 'default',
+        ...style,
+      }}
+      onMouseEnter={
+        hover
+          ? (e) => {
+              const el = e.currentTarget;
+              el.style.boxShadow = 'var(--shadow-md)';
+              el.style.borderColor = 'var(--border-strong)';
+              el.style.transform = 'translateY(-2px)';
+            }
+          : undefined
+      }
+      onMouseLeave={
+        hover
+          ? (e) => {
+              const el = e.currentTarget;
+              el.style.boxShadow = 'var(--shadow-sm)';
+              el.style.borderColor = 'var(--border)';
+              el.style.transform = 'translateY(0)';
+            }
+          : undefined
+      }
+    >
+      {children}
+    </div>
+  );
+}
+
+// ---------- Input ----------
+type InputProps = {
+  leading?: ReactNode;
+  trailing?: ReactNode;
+  placeholder?: string;
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  kbd?: string;
+  style?: CSSProperties;
+} & Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange' | 'placeholder' | 'style'
+>;
+
+export function Input({
+  leading,
+  trailing,
+  placeholder,
+  value,
+  onChange,
+  kbd,
+  style = {},
+  ...rest
+}: InputProps) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <label
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        height: 36,
+        paddingInline: 12,
+        background: 'var(--bg-2)',
+        border: `1px solid ${focused ? 'var(--brand-ring)' : 'var(--border)'}`,
+        borderRadius: 'var(--r-md)',
+        transition: 'border-color .15s ease, box-shadow .15s ease',
+        boxShadow: focused ? '0 0 0 3px var(--brand-soft)' : 'none',
+        ...style,
+      }}
+    >
+      {leading ? (
+        <span style={{ color: 'var(--fg-2)', display: 'inline-flex' }}>{leading}</span>
+      ) : null}
+      <input
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
+          color: 'var(--fg-0)',
+          fontSize: 13.5,
+          fontFamily: 'var(--font-thp-sans)',
+        }}
+        {...rest}
+      />
+      {kbd ? (
+        <span
+          style={{
+            fontSize: 10.5,
+            fontFamily: 'var(--font-thp-mono)',
+            color: 'var(--fg-2)',
+            padding: '2px 6px',
+            background: 'var(--bg-3)',
+            borderRadius: 6,
+            border: '1px solid var(--border)',
+          }}
+        >
+          {kbd}
+        </span>
+      ) : null}
+      {trailing ? <span style={{ color: 'var(--fg-2)' }}>{trailing}</span> : null}
+    </label>
+  );
+}
+
+// ---------- Icons (inline, soft stroke) ----------
+export const Icon = {
+  search: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  ),
+  plus: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  ),
+  filter: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 5h18M6 12h12M10 19h4" />
+    </svg>
+  ),
+  send: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m4 12 16-8-6 18-3-7-7-3z" />
+    </svg>
+  ),
+  smile: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.5 14a4 4 0 0 0 7 0" />
+      <circle cx="9" cy="10" r="0.7" fill="currentColor" />
+      <circle cx="15" cy="10" r="0.7" fill="currentColor" />
+    </svg>
+  ),
+  hash: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16" />
+    </svg>
+  ),
+  compass: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="m15 9-2 6-6 2 2-6 6-2z" />
+    </svg>
+  ),
+  cog: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" />
+    </svg>
+  ),
+  crown: (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 7l5 4 4-7 4 7 5-4-2 12H5L3 7z" />
+    </svg>
+  ),
+  lock: (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="11" width="16" height="10" rx="2" />
+      <path d="M8 11V8a4 4 0 1 1 8 0v3" />
+    </svg>
+  ),
+  globe: (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+    </svg>
+  ),
+  sort: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4" />
+    </svg>
+  ),
+  chevron: (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  ),
+  bolt: (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
+    </svg>
+  ),
+};

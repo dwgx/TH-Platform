@@ -1,62 +1,78 @@
-import { useState } from 'react';
-import { TitleBar } from '@/components/app/title-bar';
-import { Rail } from '@/components/app/rail';
-import { ChatRail } from '@/components/app/chat-rail';
-import { StatusBar } from '@/components/app/status-bar';
+import { Monitor, Moon, Sun } from 'lucide-react';
 import { LobbyPage } from '@/pages/lobby';
-import { RoomPage } from '@/pages/room';
-import { SettingsPage } from '@/pages/settings';
+import { useTheme, type Theme } from '@/lib/theme';
 
+// Legacy type used by older shadcn-era components (rail.tsx, title-bar.tsx,
+// room.tsx) which are no longer mounted. Kept exported so those files still
+// type-check until they are deleted in a follow-up cleanup.
 export type Page = 'lobby' | 'room' | 'channels' | 'friends' | 'settings';
 
 export default function App() {
-  const [page, setPage] = useState<Page>('lobby');
-  const [chatCollapsed, setChatCollapsed] = useState(false);
-
+  const { theme, setTheme, resolvedTheme } = useTheme();
   return (
-    <div className="flex h-full flex-col">
-      <TitleBar page={page} onNavigate={setPage} />
-
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        <Rail page={page} onNavigate={setPage} />
-
-        {/* Page slot */}
-        {page === 'lobby' && <LobbyPage />}
-        {page === 'room' && <RoomPage onNavigate={setPage} />}
-        {page === 'settings' && <SettingsPage />}
-        {page === 'channels' && (
-          <PlaceholderPage
-            title="Channels"
-            sub="Friend circles + community groups land here in v0.2."
-          />
-        )}
-        {page === 'friends' && (
-          <PlaceholderPage
-            title="Friends"
-            sub="Direct messages and friend management land here in v0.2."
-          />
-        )}
-
-        {page === 'lobby' && (
-          <ChatRail
-            collapsed={chatCollapsed}
-            onToggle={() => setChatCollapsed((c) => !c)}
-          />
-        )}
-      </div>
-
-      <StatusBar />
+    <div className="relative h-full w-full">
+      <LobbyPage theme={resolvedTheme} />
+      <ThemeFloatingToggle theme={theme} setTheme={setTheme} />
     </div>
   );
 }
 
-function PlaceholderPage({ title, sub }: { title: string; sub: string }) {
+function ThemeFloatingToggle({
+  theme,
+  setTheme,
+}: {
+  theme: Theme;
+  setTheme: (t: Theme) => void;
+}) {
+  const opts: { id: Theme; label: string; icon: typeof Sun }[] = [
+    { id: 'light', label: 'Light', icon: Sun },
+    { id: 'dark', label: 'Dark', icon: Moon },
+    { id: 'system', label: 'System', icon: Monitor },
+  ];
   return (
-    <div className="flex flex-1 items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-[24px] font-bold tracking-tight">{title}</h1>
-        <p className="mt-2 max-w-md text-[13px] text-muted-foreground">{sub}</p>
-      </div>
+    <div
+      style={{
+        position: 'fixed',
+        right: 16,
+        bottom: 16,
+        zIndex: 50,
+        display: 'flex',
+        gap: 4,
+        padding: 4,
+        borderRadius: 999,
+        background: 'rgba(20, 22, 36, 0.78)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+      }}
+    >
+      {opts.map((o) => {
+        const Icon = o.icon;
+        const active = theme === o.id;
+        return (
+          <button
+            key={o.id}
+            onClick={() => setTheme(o.id)}
+            title={o.label}
+            aria-label={o.label}
+            style={{
+              width: 30,
+              height: 30,
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: 999,
+              border: 'none',
+              background: active ? '#7C5CFF' : 'transparent',
+              color: active ? '#fff' : 'rgba(255,255,255,0.65)',
+              cursor: 'pointer',
+              transition: 'background 0.15s, color 0.15s',
+            }}
+          >
+            <Icon className="h-3.5 w-3.5" />
+          </button>
+        );
+      })}
     </div>
   );
 }

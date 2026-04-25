@@ -1,0 +1,29 @@
+# node / pnpm / vite (for when we migrate to React)
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+.vite/
+.next/
+
+# editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# tauri (future)
+src-tauri/target/
+src-tauri/Cargo.lock
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*

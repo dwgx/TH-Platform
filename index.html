@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TH-Platform</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- ───────── Title bar ───────── -->
+  <header class="titlebar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <span class="brand-name">TH-Platform</span>
+      <span class="brand-version">v0.0.1 · alpha</span>
+    </div>
+
+    <nav class="topnav">
+      <a class="topnav-item is-active" href="#lobby">Lobby</a>
+      <a class="topnav-item" href="#room">Room</a>
+      <a class="topnav-item" href="#channels">Channels</a>
+      <a class="topnav-item" href="#friends">Friends</a>
+    </nav>
+
+    <div class="window-controls">
+      <button class="wctl" title="Minimize" aria-label="Minimize">&minus;</button>
+      <button class="wctl" title="Maximize" aria-label="Maximize">&#9633;</button>
+      <button class="wctl wctl-close" title="Close" aria-label="Close">&times;</button>
+    </div>
+  </header>
+
+  <!-- ───────── Main 3-column ───────── -->
+  <main class="layout" id="lobby">
+
+    <!-- Col 1 — Rail -->
+    <aside class="rail">
+      <button class="rail-tile is-active" title="Home">
+        <span class="rail-glyph">H</span>
+      </button>
+      <div class="rail-divider"></div>
+      <button class="rail-tile" title="TH06 EoSD"><span class="rail-glyph">06</span></button>
+      <button class="rail-tile" title="TH07 PCB"><span class="rail-glyph">07</span></button>
+      <button class="rail-tile is-current" title="TH08 IN"><span class="rail-glyph">08</span></button>
+      <button class="rail-tile" title="TH09 PoFV"><span class="rail-glyph">09</span></button>
+      <button class="rail-tile rail-tile-add" title="Add server">+</button>
+      <div class="rail-spacer"></div>
+      <button class="rail-tile rail-tile-bottom" title="Discover">D</button>
+      <button class="rail-tile rail-tile-bottom" title="Settings">S</button>
+    </aside>
+
+    <!-- Col 2 — Navigator -->
+    <aside class="nav">
+      <div class="nav-header">
+        <div>
+          <div class="nav-title">Lobby</div>
+          <div class="nav-subtitle">CN-East · 24ms</div>
+        </div>
+        <button class="icon-btn" aria-label="Switch region">▾</button>
+      </div>
+
+      <section class="nav-section">
+        <h4 class="nav-section-title">Server type</h4>
+        <div class="chip-row">
+          <button class="chip is-active">Official</button>
+          <button class="chip">Personal</button>
+          <button class="chip is-disabled">Community<span class="chip-lock"></span></button>
+        </div>
+      </section>
+
+      <section class="nav-section">
+        <h4 class="nav-section-title">Game</h4>
+        <div class="pill-row">
+          <button class="pill">TH06</button>
+          <button class="pill">TH07</button>
+          <button class="pill is-active">TH08</button>
+          <button class="pill">TH09</button>
+          <button class="pill is-muted">TH10–20</button>
+        </div>
+      </section>
+
+      <section class="nav-section">
+        <h4 class="nav-section-title">My rooms</h4>
+        <ul class="row-list">
+          <li class="row">
+            <span class="dot dot-success"></span>
+            <span class="row-name">Room #4912</span>
+            <span class="row-meta">24ms</span>
+          </li>
+          <li class="row">
+            <span class="dot dot-warning"></span>
+            <span class="row-name">Room #4730</span>
+            <span class="row-meta">112ms</span>
+          </li>
+          <li class="row row-empty">
+            <span class="row-name">No more recent rooms</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="nav-section">
+        <h4 class="nav-section-title">Friends online · 3</h4>
+        <ul class="row-list">
+          <li class="row">
+            <span class="avatar avatar-sm" data-initial="Y"></span>
+            <span class="row-name">youmu</span>
+            <span class="row-meta">in #4912</span>
+          </li>
+          <li class="row">
+            <span class="avatar avatar-sm" data-initial="R"></span>
+            <span class="row-name">reimu</span>
+            <span class="row-meta">idle</span>
+          </li>
+          <li class="row">
+            <span class="avatar avatar-sm" data-initial="M"></span>
+            <span class="row-name">marisa</span>
+            <span class="row-meta">in #4730</span>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="nav-footer">
+        <span class="avatar avatar-md" data-initial="D"></span>
+        <div class="nav-footer-id">
+          <div class="nav-footer-name">dwgx</div>
+          <div class="nav-footer-handle">@dwgx · 100029481</div>
+        </div>
+        <button class="icon-btn" aria-label="Status">●</button>
+      </footer>
+    </aside>
+
+    <!-- Col 3 — Content -->
+    <section class="content">
+      <header class="content-header">
+        <div>
+          <h1 class="content-title">TH08 · Imperishable Night</h1>
+          <p class="content-subtitle">12 active rooms · 47 players online</p>
+        </div>
+        <div class="content-actions">
+          <div class="search">
+            <span class="search-icon">⌕</span>
+            <input type="text" placeholder="Search room or host" />
+          </div>
+          <button class="btn btn-secondary">
+            <span>Sort: Ping</span>
+            <span class="btn-caret">▾</span>
+          </button>
+          <button class="btn btn-primary">+ New room</button>
+        </div>
+      </header>
+
+      <!-- Server card grid -->
+      <div class="card-grid">
+        <article class="card">
+          <div class="card-banner card-banner-th08"></div>
+          <div class="card-body">
+            <div class="card-row">
+              <h3 class="card-title">Room #4912 — Beijing</h3>
+              <span class="badge badge-official">Official</span>
+            </div>
+            <div class="card-meta">
+              <span class="card-meta-item">TH08</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">24ms</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">CN-East</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-host">
+                <span class="avatar avatar-xs" data-initial="Y"></span>
+                <span class="card-host-name">youmu</span>
+              </div>
+              <div class="card-occupancy">
+                <span class="dot dot-success dot-pulse"></span>
+                <span>3 / 4</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-banner card-banner-th08"></div>
+          <div class="card-body">
+            <div class="card-row">
+              <h3 class="card-title">Lunatic only — no bombs</h3>
+              <span class="badge badge-personal">Personal</span>
+            </div>
+            <div class="card-meta">
+              <span class="card-meta-item">TH08</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">38ms</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">Tokyo</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-host">
+                <span class="avatar avatar-xs" data-initial="Y"></span>
+                <span class="card-host-name">yukari</span>
+              </div>
+              <div class="card-occupancy">
+                <span class="dot dot-success dot-pulse"></span>
+                <span>2 / 4</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-banner card-banner-th08"></div>
+          <div class="card-body">
+            <div class="card-row">
+              <h3 class="card-title">深夜挑战 — 北京 #2</h3>
+              <span class="badge badge-personal">Personal</span>
+            </div>
+            <div class="card-meta">
+              <span class="card-meta-item">TH08</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">31ms</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">CN-East</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-host">
+                <span class="avatar avatar-xs" data-initial="R"></span>
+                <span class="card-host-name">reimu</span>
+              </div>
+              <div class="card-occupancy">
+                <span class="dot dot-warning"></span>
+                <span>4 / 4</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-banner card-banner-th08"></div>
+          <div class="card-body">
+            <div class="card-row">
+              <h3 class="card-title">Co-op — beginners welcome</h3>
+              <span class="badge badge-personal">Personal</span>
+            </div>
+            <div class="card-meta">
+              <span class="card-meta-item">TH08</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">52ms</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">CN-South</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-host">
+                <span class="avatar avatar-xs" data-initial="A"></span>
+                <span class="card-host-name">alice</span>
+              </div>
+              <div class="card-occupancy">
+                <span class="dot dot-success dot-pulse"></span>
+                <span>1 / 4</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-banner card-banner-th08"></div>
+          <div class="card-body">
+            <div class="card-row">
+              <h3 class="card-title">Score-attack 1cc</h3>
+              <span class="badge badge-personal">Personal</span>
+            </div>
+            <div class="card-meta">
+              <span class="card-meta-item">TH08</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">19ms</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">CN-East</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-host">
+                <span class="avatar avatar-xs" data-initial="S"></span>
+                <span class="card-host-name">sakuya</span>
+              </div>
+              <div class="card-occupancy">
+                <span class="dot dot-success dot-pulse"></span>
+                <span>2 / 4</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-banner card-banner-th08"></div>
+          <div class="card-body">
+            <div class="card-row">
+              <h3 class="card-title">Practice stage 5/6</h3>
+              <span class="badge badge-personal">Personal</span>
+            </div>
+            <div class="card-meta">
+              <span class="card-meta-item">TH08</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">44ms</span>
+              <span class="card-dot"></span>
+              <span class="card-meta-item">CN-North</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-host">
+                <span class="avatar avatar-xs" data-initial="M"></span>
+                <span class="card-host-name">marisa</span>
+              </div>
+              <div class="card-occupancy">
+                <span class="dot dot-muted"></span>
+                <span>0 / 4</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Lobby chat strip -->
+      <section class="lobby-chat">
+        <header class="lobby-chat-header">
+          <span class="lobby-chat-title">#lobby-th08</span>
+          <span class="lobby-chat-meta">47 online · type / for commands</span>
+        </header>
+        <div class="lobby-chat-body">
+          <div class="msg">
+            <span class="msg-name">youmu</span>
+            <span class="msg-time">02:13</span>
+            <span class="msg-text">Anyone up for Lunatic? room #4912</span>
+          </div>
+          <div class="msg">
+            <span class="msg-name">marisa</span>
+            <span class="msg-time">02:14</span>
+            <span class="msg-text">i'll join in 5</span>
+          </div>
+          <div class="msg msg-system">
+            <span class="msg-text">— sakuya shared room #4730 —</span>
+          </div>
+          <div class="msg">
+            <span class="msg-name">reimu</span>
+            <span class="msg-time">02:16</span>
+            <span class="msg-text">Score-attack later? CN-East 19ms</span>
+          </div>
+        </div>
+        <footer class="lobby-chat-input">
+          <input type="text" placeholder="Message #lobby-th08 — text and emoji only" />
+          <button class="icon-btn" aria-label="Emoji">☺</button>
+          <button class="icon-btn" aria-label="Share room">+</button>
+        </footer>
+      </section>
+    </section>
+  </main>
+
+  <!-- ───────── Status bar ───────── -->
+  <footer class="statusbar">
+    <span class="status-item"><span class="dot dot-success"></span>Connected · CN-East · 24ms</span>
+    <span class="status-item">DLL v0.0.1 · TH08 detected</span>
+    <span class="status-item">Build alpha · 2026-04-26</span>
+  </footer>
+</body>
+</html>

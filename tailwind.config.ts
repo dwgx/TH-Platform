@@ -4,52 +4,37 @@ const config: Config = {
   darkMode: ['class'],
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: { '2xl': '1400px' },
-    },
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+        // Surfaces
+        rail: 'hsl(var(--bg-rail))',
+        sidebar: 'hsl(var(--bg-sidebar))',
+        content: 'hsl(var(--bg-content))',
+        members: 'hsl(var(--bg-members))',
+        floating: 'hsl(var(--bg-floating))',
+        hover: 'hsl(var(--bg-hover))',
+        active: 'hsl(var(--bg-active))',
+        input: 'hsl(var(--bg-input))',
+
+        // Text
+        header: 'hsl(var(--fg-header))',
+        body: 'hsl(var(--fg-normal))',
+        muted: 'hsl(var(--fg-muted))',
+        link: 'hsl(var(--fg-link))',
+
+        // Brand + accents
+        brand: {
+          DEFAULT: 'hsl(var(--brand))',
+          hover: 'hsl(var(--brand-hover))',
+          foreground: 'hsl(var(--brand-foreground))',
         },
         success: 'hsl(var(--success))',
+        danger: 'hsl(var(--danger))',
         warning: 'hsl(var(--warning))',
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-        },
+
+        // Borders
+        border: 'hsl(var(--border))',
+        separator: 'hsl(var(--separator))',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -57,32 +42,17 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: 'var(--font-sans)',
-        mono: 'var(--font-mono)',
-      },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-        'pulse-soft': {
-          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
-          '50%': { opacity: '0.4', transform: 'scale(1.4)' },
-        },
-        'fade-in': {
-          from: { opacity: '0', transform: 'translateY(2px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
+        sans: ['var(--font-sans)'],
+        mono: ['var(--font-mono)'],
       },
       animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-soft': 'pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'fade-in': 'fade-in 0.2s ease-out',
+        'pulse-soft': 'pulse-soft 1.5s ease-in-out infinite',
+      },
+      keyframes: {
+        'pulse-soft': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.4' },
+        },
       },
     },
   },

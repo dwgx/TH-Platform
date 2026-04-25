@@ -3,104 +3,122 @@
 @tailwind utilities;
 
 @layer base {
+  /* Discord — Light */
   :root {
-    /* Light theme — Claude Code-style neutral, white-paper feel */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 8%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 8%;
-    --primary: 232 84% 64%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 10% 12%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 42%;
-    --accent: 240 5% 96%;
-    --accent-foreground: 240 10% 12%;
-    --destructive: 0 75% 56%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 142 65% 38%;
-    --warning: 35 90% 48%;
-    --border: 240 6% 90%;
-    --input: 240 6% 88%;
-    --ring: 232 84% 64%;
-    --sidebar: 240 6% 98%;
-    --sidebar-foreground: 240 10% 8%;
-    --radius: 0.625rem;
+    --bg-rail: 220 8% 88%;          /* #DCDEE3 server rail */
+    --bg-sidebar: 220 13% 95%;      /* #F2F3F5 channel list */
+    --bg-content: 0 0% 100%;        /* #FFFFFF main */
+    --bg-members: 220 13% 95%;      /* #F2F3F5 members */
+    --bg-floating: 0 0% 100%;
+    --bg-hover: 220 8% 90%;
+    --bg-active: 220 8% 86%;
+    --bg-input: 220 6% 92%;
+    --bg-mention: 235 86% 65% / 0.10;
+
+    --fg-header: 218 8% 4%;         /* #060607 */
+    --fg-normal: 215 8% 20%;        /* #2E3338 */
+    --fg-muted: 213 6% 38%;         /* #5C5E66 */
+    --fg-link: 197 100% 47%;
+
+    --brand: 235 86% 65%;           /* #5865F2 */
+    --brand-hover: 235 70% 60%;
+    --brand-foreground: 0 0% 100%;
+    --success: 139 65% 41%;         /* #23A55A */
+    --danger: 358 68% 54%;          /* #DA373C */
+    --warning: 38 88% 50%;
+
+    --border: 220 6% 88%;
+    --separator: 220 6% 90%;
+
+    --radius: 8px;
 
     --font-sans:
-      -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI',
+      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
       'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui,
       sans-serif;
     --font-mono:
-      'SF Mono', 'JetBrains Mono', Consolas, 'Sarasa Mono SC', ui-monospace,
+      'JetBrains Mono', 'SF Mono', Consolas, 'Sarasa Mono SC', ui-monospace,
       monospace;
   }
 
+  /* Discord — Dark (Onyx-ish) */
   .dark {
-    /* Dark theme — Claude Code-style neutral, deep but not pitch black */
-    --background: 240 8% 6%;
-    --foreground: 0 0% 96%;
-    --card: 240 7% 9%;
-    --card-foreground: 0 0% 96%;
-    --popover: 240 7% 11%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 232 86% 72%;
-    --primary-foreground: 240 10% 8%;
-    --secondary: 240 5% 14%;
-    --secondary-foreground: 0 0% 96%;
-    --muted: 240 5% 14%;
-    --muted-foreground: 240 5% 62%;
-    --accent: 240 5% 14%;
-    --accent-foreground: 0 0% 96%;
-    --destructive: 0 65% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 142 60% 50%;
-    --warning: 35 90% 60%;
-    --border: 240 5% 16%;
-    --input: 240 5% 16%;
-    --ring: 232 86% 72%;
-    --sidebar: 240 7% 7%;
-    --sidebar-foreground: 0 0% 96%;
-  }
+    --bg-rail: 225 6% 12%;          /* #1E1F22 */
+    --bg-sidebar: 220 6% 18%;       /* #2B2D31 */
+    --bg-content: 223 6% 21%;       /* #313338 */
+    --bg-members: 220 6% 18%;       /* #2B2D31 */
+    --bg-floating: 220 7% 7%;       /* #111214 */
+    --bg-hover: 225 4% 25%;
+    --bg-active: 225 4% 28%;
+    --bg-input: 225 5% 14%;
+    --bg-mention: 235 86% 65% / 0.14;
 
-  * {
-    @apply border-border;
+    --fg-header: 220 13% 95%;       /* #F2F3F5 */
+    --fg-normal: 220 6% 84%;        /* #DBDEE1 */
+    --fg-muted: 215 9% 53%;         /* #80848E */
+    --fg-link: 197 100% 60%;
+
+    --brand: 235 86% 65%;           /* #5865F2 same in both modes */
+    --brand-hover: 235 70% 70%;
+    --brand-foreground: 0 0% 100%;
+    --success: 139 47% 44%;
+    --danger: 358 60% 52%;
+    --warning: 38 88% 57%;
+
+    --border: 225 6% 14%;
+    --separator: 225 6% 16%;
+  }
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: hsl(var(--border));
   }
 
   html,
   body,
   #root {
-    @apply h-full;
+    height: 100%;
   }
 
   body {
-    @apply bg-background text-foreground;
+    color: hsl(var(--fg-normal));
+    background: hsl(var(--bg-content));
     font-family: var(--font-sans);
-    font-feature-settings:
-      'rlig' 1,
-      'calt' 1;
+    font-size: 14px;
+    line-height: 1.4;
     overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Scrollbar polish */
+  /* Discord-style thin scrollbars on hover-only */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
   ::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full;
+    background: hsl(var(--bg-floating) / 0.5);
+    border-radius: 4px;
     border: 2px solid transparent;
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/40;
+    background: hsl(var(--bg-floating) / 0.85);
     background-clip: padding-box;
+    border: 2px solid transparent;
   }
-  ::-webkit-scrollbar-track {
-    background: transparent;
+
+  /* Selection — blurple highlight */
+  ::selection {
+    background: hsl(var(--brand) / 0.36);
+    color: hsl(var(--fg-header));
   }
 }
 

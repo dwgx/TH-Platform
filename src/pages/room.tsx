@@ -1,199 +1,133 @@
-import { useState } from 'react';
-import { ArrowLeft, Clipboard, Crown, Plus, Settings as SettingsIcon, Sparkles } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RoomCover } from '@/components/app/room-cover';
+import { ArrowLeft, Crown, Hash, Plus, Settings as SettingsIcon } from 'lucide-react';
 import { rooms } from '@/data/mock';
 import { cn } from '@/lib/utils';
-import type { Page } from '@/App';
 
 interface RoomPageProps {
-  onNavigate: (p: Page) => void;
+  onLeave: () => void;
 }
 
-export function RoomPage({ onNavigate }: RoomPageProps) {
-  const room = rooms[0]; // demo: first room
-  const [ready, setReady] = useState(false);
+export function RoomPage({ onLeave }: RoomPageProps) {
+  const room = rooms[0];
 
   return (
-    <div className="flex flex-1 flex-col bg-background">
-      {/* Top bar */}
-      <header className="flex h-14 items-center gap-4 border-b bg-card/50 px-4">
-        <Button variant="ghost" size="sm" onClick={() => onNavigate('lobby')}>
-          <ArrowLeft />
-          Back to lobby
-        </Button>
-        <div className="flex-1 text-center">
-          <div className="flex items-center justify-center gap-2 text-[15px] font-semibold">
-            {room.name}
-          </div>
-          <div className="mt-0.5 flex items-center justify-center gap-2 font-mono text-[10.5px] text-muted-foreground">
-            <span>🏛️ {room.kind}</span>
-            <span>·</span>
-            <span>{room.game}</span>
-            <span>·</span>
-            <span>Host {room.players[0]?.name}</span>
-            <span>·</span>
-            <span className="text-success">{room.pingMs}ms</span>
-            <span>·</span>
-            <span>{room.players.length}/{room.capacity}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="default">Public</Badge>
-          <Button variant="secondary" size="sm">
-            <Clipboard />
-            Copy invite
-          </Button>
-          <Button variant="ghost" size="icon-sm" aria-label="Room settings">
-            <SettingsIcon />
-          </Button>
+    <div className="flex flex-1 flex-col min-h-0">
+      <header className="flex h-12 items-center gap-3 border-b border-floating/40 bg-content px-4 shadow-sm shrink-0">
+        <button
+          onClick={onLeave}
+          className="flex items-center gap-1.5 rounded px-2 py-1 text-[13px] text-muted transition-colors hover:bg-hover hover:text-header"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Lobby
+        </button>
+        <span className="h-5 w-px bg-floating/60" />
+        <Hash className="h-5 w-5 text-muted" />
+        <span className="text-[15px] font-semibold text-header">{room.name}</span>
+        <span className="rounded bg-brand/15 px-1.5 py-px text-[10px] font-bold uppercase tracking-wider text-brand">
+          {room.kind}
+        </span>
+        <span className="font-mono text-[11.5px] text-muted">
+          {room.game} · {room.region} · {room.pingMs}ms
+        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <button className="grid h-8 w-8 place-items-center rounded text-muted hover:bg-hover hover:text-header">
+            <SettingsIcon className="h-4 w-4" />
+          </button>
         </div>
       </header>
 
-      {/* Main */}
-      <div className="grid flex-1 grid-cols-[1fr_360px] gap-4 overflow-hidden p-4">
-        {/* Seats */}
-        <ScrollArea>
-          <section className="space-y-3">
-            <h2 className="text-[12.5px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Seats
-            </h2>
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => {
-                const player = room.players[i];
-                if (!player) {
-                  return (
-                    <div
-                      key={i}
-                      className="flex h-44 flex-col items-center justify-center gap-2 rounded-xl border border-dashed bg-card/30 text-muted-foreground transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary"
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span className="text-xs font-medium">Invite player</span>
-                    </div>
-                  );
-                }
+      <div className="flex flex-1 min-h-0">
+        {/* Seats area */}
+        <section className="flex-1 overflow-y-auto p-6">
+          <h2 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-muted">
+            Seats — {room.players.length}/{room.capacity}
+          </h2>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: room.capacity }).map((_, i) => {
+              const p = room.players[i];
+              if (!p) {
                 return (
-                  <article
+                  <button
                     key={i}
-                    className={cn(
-                      'flex h-44 flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border bg-card p-4',
-                      player.isHost && 'border-primary/40 ring-1 ring-primary/20',
-                    )}
+                    className="flex h-44 flex-col items-center justify-center gap-2 rounded border border-dashed border-floating/60 bg-floating/20 text-muted transition-colors hover:border-brand hover:text-brand"
                   >
-                    <div className="relative">
-                      <Avatar className="h-14 w-14 ring-2 ring-background">
-                        <AvatarFallback name={player.name} />
-                      </Avatar>
-                      {player.isHost && (
-                        <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full border-2 border-card bg-amber-400 text-amber-950">
-                          <Crown className="h-3 w-3" />
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <div className="text-[13px] font-semibold">{player.name}</div>
-                      <div className="font-mono text-[10.5px] text-muted-foreground">
-                        @{player.name}
-                      </div>
-                    </div>
-                    <Badge variant={i === 0 ? 'success' : 'secondary'}>
-                      {i === 0 ? 'Ready' : 'Picking'}
-                    </Badge>
-                  </article>
+                    <Plus className="h-5 w-5" />
+                    <span className="text-[12.5px] font-medium">Invite player</span>
+                  </button>
                 );
-              })}
-            </div>
-            <h2 className="pt-4 text-[12.5px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Spectators · 0
-            </h2>
-            <div className="rounded-lg border border-dashed bg-card/30 px-4 py-6 text-center text-[12px] text-muted-foreground">
-              No spectators yet
-            </div>
-          </section>
-        </ScrollArea>
+              }
+              return (
+                <article
+                  key={i}
+                  className={cn(
+                    'flex h-44 flex-col items-center justify-center gap-2 rounded bg-floating/40 p-4',
+                    p.isHost && 'ring-1 ring-warning/40',
+                  )}
+                >
+                  <div className="relative">
+                    <span className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-violet-700 text-[18px] font-bold text-white">
+                      {p.name[0]}
+                    </span>
+                    {p.isHost ? (
+                      <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full border-2 border-content bg-warning text-content">
+                        <Crown className="h-3 w-3" />
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[14px] font-semibold text-header">{p.name}</div>
+                    <div className="font-mono text-[11px] text-muted">@{p.name}</div>
+                  </div>
+                  <span className={cn(
+                    'rounded px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wider',
+                    i === 0 ? 'bg-success/15 text-success' : 'bg-input text-muted',
+                  )}>
+                    {i === 0 ? 'Ready' : 'Picking'}
+                  </span>
+                </article>
+              );
+            })}
+          </div>
+
+          <h2 className="mt-6 mb-3 text-[11px] font-bold uppercase tracking-wider text-muted">
+            Spectators — 0
+          </h2>
+          <div className="rounded border border-dashed border-floating/60 bg-floating/20 px-4 py-6 text-center text-[12.5px] text-muted">
+            No spectators yet
+          </div>
+        </section>
 
         {/* Parameters panel */}
-        <aside className="overflow-hidden rounded-xl border bg-card">
-          <RoomCover id={room.cover} className="h-20" />
-          <div className="p-4">
-            <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-secondary">
-                <TabsTrigger value="basic">Basic</TabsTrigger>
-                <TabsTrigger value="advanced">Adv.</TabsTrigger>
-                <TabsTrigger value="network">Net</TabsTrigger>
-                <TabsTrigger value="anti-cheat">A/C</TabsTrigger>
-              </TabsList>
-              <TabsContent value="basic" className="space-y-3 pt-4">
-                <Field label="Difficulty" value={room.difficulty} />
-                <Field label="Mode" value={room.mode} />
-                <Field label="Max lives" value="3" />
-                <Field label="Max bombs" value="3" />
-                <Field label="Random seed" value="0x4912AB" mono />
-                <Field label="Game version" value="v1.00d" />
-              </TabsContent>
-              <TabsContent value="advanced" className="pt-4 text-[12px] text-muted-foreground">
-                Advanced parameters appear here once host enables.
-              </TabsContent>
-              <TabsContent value="network" className="pt-4 text-[12px] text-muted-foreground">
-                Direct UDP · NAT pierced · 24ms RTT.
-              </TabsContent>
-              <TabsContent value="anti-cheat" className="pt-4 text-[12px] text-muted-foreground">
-                DLL signature: <span className="font-mono">aa18 5b2c …</span>
-              </TabsContent>
-            </Tabs>
+        <aside className="hidden w-[320px] flex-col border-l border-floating/40 bg-sidebar shrink-0 lg:flex">
+          <header className="flex h-12 items-center px-4 shadow-sm border-b border-floating/40">
+            <span className="text-[14px] font-semibold text-header">Parameters</span>
+          </header>
+          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            <Field label="Difficulty" value={room.difficulty} />
+            <Field label="Mode" value={room.mode} />
+            <Field label="Max lives" value="3" />
+            <Field label="Max bombs" value="3" />
+            <Field label="Random seed" value="0x4912AB" mono />
+            <Field label="Game version" value="v1.00d" />
+            <Field label="DLL" value="v0.0.1 alpha" mono />
+            <Field label="RTT" value={`${room.pingMs}ms`} />
           </div>
+
+          <footer className="border-t border-floating/40 p-3">
+            <button className="h-10 w-full rounded bg-success text-[14px] font-bold text-white transition-colors hover:brightness-110">
+              READY
+            </button>
+          </footer>
         </aside>
       </div>
-
-      {/* Bottom bar */}
-      <footer className="flex h-20 items-center justify-between gap-4 border-t bg-card/50 px-4">
-        <div className="flex-1 text-[12px] text-muted-foreground">
-          <span className="font-semibold text-foreground">marisa</span> joined ·
-          a moment ago
-        </div>
-        <div className="flex items-center gap-3">
-          {ready ? (
-            <Button size="lg" onClick={() => setReady(false)}>
-              <Sparkles />
-              Start match
-            </Button>
-          ) : (
-            <Button
-              size="lg"
-              variant="secondary"
-              onClick={() => setReady(true)}
-            >
-              READY
-            </Button>
-          )}
-        </div>
-        <div className="flex flex-1 justify-end">
-          <Button variant="ghost" size="sm">
-            Leave room
-          </Button>
-        </div>
-      </footer>
     </div>
   );
 }
 
-function Field({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
+function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
-    <div className="flex items-center justify-between border-b py-1.5 last:border-b-0">
-      <span className="text-[12px] text-muted-foreground">{label}</span>
-      <span className={cn('text-[12px] font-medium', mono && 'font-mono')}>
+    <div className="flex items-center justify-between border-b border-floating/40 py-1.5 last:border-b-0">
+      <span className="text-[12px] text-muted">{label}</span>
+      <span className={cn('text-[12.5px] font-medium text-body', mono && 'font-mono')}>
         {value}
       </span>
     </div>

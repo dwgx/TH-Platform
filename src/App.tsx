@@ -1,78 +1,43 @@
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { useState } from 'react';
+import { ServerRail } from '@/components/app/server-rail';
+import { Sidebar } from '@/components/app/sidebar';
+import { MembersRail } from '@/components/app/members-rail';
 import { LobbyPage } from '@/pages/lobby';
-import { useTheme, type Theme } from '@/lib/theme';
+import { RoomPage } from '@/pages/room';
+import { ChannelsPage } from '@/pages/channels';
+import { FriendsPage } from '@/pages/friends';
+import { SettingsPage } from '@/pages/settings';
+import type { Page } from '@/types';
 
-// Legacy type used by older shadcn-era components (rail.tsx, title-bar.tsx,
-// room.tsx) which are no longer mounted. Kept exported so those files still
-// type-check until they are deleted in a follow-up cleanup.
-export type Page = 'lobby' | 'room' | 'channels' | 'friends' | 'settings';
+export type { Page } from '@/types';
 
 export default function App() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  return (
-    <div className="relative h-full w-full">
-      <LobbyPage theme={resolvedTheme} />
-      <ThemeFloatingToggle theme={theme} setTheme={setTheme} />
-    </div>
-  );
-}
+  const [page, setPage] = useState<Page>('lobby');
+  const [activeChannelId, setActiveChannelId] = useState('lobby-th08');
 
-function ThemeFloatingToggle({
-  theme,
-  setTheme,
-}: {
-  theme: Theme;
-  setTheme: (t: Theme) => void;
-}) {
-  const opts: { id: Theme; label: string; icon: typeof Sun }[] = [
-    { id: 'light', label: 'Light', icon: Sun },
-    { id: 'dark', label: 'Dark', icon: Moon },
-    { id: 'system', label: 'System', icon: Monitor },
-  ];
+  // Settings is a full-screen takeover — no rail/sidebar
+  if (page === 'settings') {
+    return <SettingsPage onClose={() => setPage('lobby')} />;
+  }
+
+  const showMembers = page === 'lobby' || page === 'channels';
+
   return (
-    <div
-      style={{
-        position: 'fixed',
-        right: 16,
-        bottom: 16,
-        zIndex: 50,
-        display: 'flex',
-        gap: 4,
-        padding: 4,
-        borderRadius: 999,
-        background: 'rgba(20, 22, 36, 0.78)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
-      }}
-    >
-      {opts.map((o) => {
-        const Icon = o.icon;
-        const active = theme === o.id;
-        return (
-          <button
-            key={o.id}
-            onClick={() => setTheme(o.id)}
-            title={o.label}
-            aria-label={o.label}
-            style={{
-              width: 30,
-              height: 30,
-              display: 'grid',
-              placeItems: 'center',
-              borderRadius: 999,
-              border: 'none',
-              background: active ? '#7C5CFF' : 'transparent',
-              color: active ? '#fff' : 'rgba(255,255,255,0.65)',
-              cursor: 'pointer',
-              transition: 'background 0.15s, color 0.15s',
-            }}
-          >
-            <Icon className="h-3.5 w-3.5" />
-          </button>
-        );
-      })}
+    <div className="flex h-full bg-content text-body">
+      <ServerRail page={page} onNavigate={setPage} />
+      <Sidebar
+        page={page}
+        onNavigate={setPage}
+        activeChannelId={activeChannelId}
+        onSelectChannel={setActiveChannelId}
+      />
+      <main className="flex flex-1 flex-col min-w-0 bg-content">
+        {page === 'lobby' && <LobbyPage onOpenRoom={() => setPage('room')} />}
+        {page === 'room' && <RoomPage onLeave={() => setPage('lobby')} />}
+        {page === 'channels' && <ChannelsPage channelId={activeChannelId} />}
+        {page === 'friends' && <FriendsPage />}
+      </main>
+      {showMembers && <MembersRail />}
     </div>
   );
 }

@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme — Claude Code-style neutral, white-paper feel */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 8%;
+    --primary: 232 84% 64%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 10% 12%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 42%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 10% 12%;
+    --destructive: 0 75% 56%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 65% 38%;
+    --warning: 35 90% 48%;
+    --border: 240 6% 90%;
+    --input: 240 6% 88%;
+    --ring: 232 84% 64%;
+    --sidebar: 240 6% 98%;
+    --sidebar-foreground: 240 10% 8%;
+    --radius: 0.625rem;
+
+    --font-sans:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI',
+      'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui,
+      sans-serif;
+    --font-mono:
+      'SF Mono', 'JetBrains Mono', Consolas, 'Sarasa Mono SC', ui-monospace,
+      monospace;
+  }
+
+  .dark {
+    /* Dark theme — Claude Code-style neutral, deep but not pitch black */
+    --background: 240 8% 6%;
+    --foreground: 0 0% 96%;
+    --card: 240 7% 9%;
+    --card-foreground: 0 0% 96%;
+    --popover: 240 7% 11%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 232 86% 72%;
+    --primary-foreground: 240 10% 8%;
+    --secondary: 240 5% 14%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 240 5% 14%;
+    --muted-foreground: 240 5% 62%;
+    --accent: 240 5% 14%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 60% 50%;
+    --warning: 35 90% 60%;
+    --border: 240 5% 16%;
+    --input: 240 5% 16%;
+    --ring: 232 86% 72%;
+    --sidebar: 240 7% 7%;
+    --sidebar-foreground: 0 0% 96%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+    overflow: hidden;
+  }
+
+  /* Scrollbar polish */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer utilities {
+  .titlebar-drag {
+    -webkit-app-region: drag;
+  }
+  .titlebar-no-drag {
+    -webkit-app-region: no-drag;
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}

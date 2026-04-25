@@ -1,0 +1,278 @@
+/* global React, UI, SHARED */
+// Profile — popover (360px) + full page (max 880px).
+
+const { useState: useStateP } = React;
+const { Avatar: AvP, Badge: BdgP, Icon: IcP, Button: BtnP } = UI;
+const { Tabs: TabsP, Row: RowP, SectionLabel: SLP, Divider: DivP } = SHARED;
+
+// Deterministic banner gradient from UID
+function uidGradient(uid) {
+  const grads = [
+    'linear-gradient(135deg, #4C3B7A 0%, #7C5CFF 60%, #4FD1C5 100%)',
+    'linear-gradient(135deg, #2A8E8C 0%, #4FD1C5 50%, #7C5CFF 100%)',
+    'linear-gradient(135deg, #6E51E0 0%, #9B7BFF 50%, #4C9BFF 100%)',
+    'linear-gradient(135deg, #C97A2B 0%, #F5B544 60%, #FF8FA3 100%)',
+    'linear-gradient(135deg, #2F6F5E 0%, #4ADE80 60%, #C7E25C 100%)',
+    'linear-gradient(135deg, #2C3470 0%, #5A6FD8 50%, #B07FE8 100%)',
+  ];
+  let h = 0; for (const c of String(uid)) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return grads[h % grads.length];
+}
+
+function BindingDot({ kind, linked }) {
+  const colors = { qq: '#12B7F5', discord: '#5865F2', github: '#E8EAF1' };
+  const labels = { qq: 'QQ', discord: 'Discord', github: 'GitHub' };
+  return (
+    <button title={linked ? '已绑定' : '未绑定 — 点击设置'} style={{
+      height: 28, paddingInline: 10, gap: 6,
+      display: 'inline-flex', alignItems: 'center',
+      borderRadius: 999, border: '1px solid',
+      background: linked ? 'var(--bg-2)' : 'transparent',
+      borderColor: linked ? 'var(--border-strong)' : 'var(--border)',
+      color: linked ? 'var(--fg-0)' : 'var(--fg-3)',
+      fontSize: 11.5, fontWeight: 600, cursor: 'pointer',
+      opacity: linked ? 1 : 0.7,
+    }}>
+      <span style={{ width: 7, height: 7, borderRadius: '50%', background: linked ? colors[kind] : 'var(--fg-3)' }} />
+      {labels[kind]}
+      {!linked ? <span style={{ fontSize: 9, color: 'var(--fg-3)' }}>{IcP.lock}</span> : null}
+    </button>
+  );
+}
+
+function TagChip({ children }) {
+  return (
+    <span className="cjk" style={{
+      height: 24, paddingInline: 9, borderRadius: 999,
+      display: 'inline-flex', alignItems: 'center',
+      background: 'var(--bg-2)', color: 'var(--fg-1)',
+      border: '1px solid var(--border)',
+      fontSize: 11, fontWeight: 600,
+    }}>{children}</span>
+  );
+}
+
+function CopyField({ value }) {
+  const [copied, setCopied] = useStateP(false);
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      fontFamily: 'var(--font-mono)', fontSize: 12,
+      color: 'var(--fg-1)', background: 'var(--bg-2)',
+      padding: '3px 8px', borderRadius: 6,
+      border: '1px solid var(--border)',
+    }}>
+      {value}
+      <button onClick={() => { setCopied(true); setTimeout(() => setCopied(false), 1200); }} style={{
+        width: 18, height: 18, borderRadius: 4, border: 'none',
+        background: 'transparent', color: 'var(--fg-2)',
+        cursor: 'pointer', fontSize: 11,
+      }}>{copied ? '✓' : '⧉'}</button>
+    </span>
+  );
+}
+
+// =========================================================
+// POPOVER
+function ProfilePopover({ theme = 'dark' }) {
+  const uid = '100029481';
+  return (
+    <div className={`thp theme-${theme}`} style={{
+      width: 360, background: 'var(--bg-1)',
+      border: '1px solid var(--border-strong)',
+      borderRadius: 'var(--r-lg)',
+      overflow: 'hidden',
+      boxShadow: 'var(--shadow-lg)',
+      fontFamily: 'var(--font-sans)',
+    }}>
+      <div style={{ height: 96, background: uidGradient(uid) }} />
+      <div style={{ padding: '0 16px 16px', position: 'relative' }}>
+        <div style={{ marginTop: -36, marginBottom: 10, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--bg-1)', padding: 5 }}>
+            <AvP size={70} name="妖梦" status="online" />
+          </div>
+          <button style={{ height: 28, paddingInline: 10, borderRadius: 999, border: '1px solid var(--border-strong)', background: 'var(--bg-2)', color: 'var(--fg-1)', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)' }} />
+            <span className="cjk">在线</span>
+          </button>
+        </div>
+
+        <div className="cjk" style={{ fontSize: 18, fontWeight: 800, color: 'var(--fg-0)', fontFamily: 'var(--font-display)', letterSpacing: '-0.01em' }}>魂魄妖梦</div>
+        <div style={{ fontSize: 12, color: 'var(--fg-2)', fontFamily: 'var(--font-mono)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span>@youmu</span>
+          <span style={{ color: 'var(--fg-3)' }}>·</span>
+          <span>UID {uid}</span>
+          <button style={{ width: 16, height: 16, borderRadius: 4, border: 'none', background: 'transparent', color: 'var(--fg-2)', cursor: 'pointer', fontSize: 11 }}>⧉</button>
+        </div>
+
+        <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
+          <BindingDot kind="qq" linked />
+          <BindingDot kind="discord" linked={false} />
+          <BindingDot kind="github" linked />
+        </div>
+
+        <div style={{ display: 'flex', gap: 5, marginTop: 12, flexWrap: 'wrap' }}>
+          <TagChip>永夜抄熟练</TagChip>
+          <TagChip>夜组</TagChip>
+          <TagChip>魔理沙B本命</TagChip>
+        </div>
+
+        <div className="cjk" style={{
+          marginTop: 12, padding: '10px 12px',
+          background: 'var(--bg-2)', borderRadius: 'var(--r-md)',
+          fontSize: 12.5, color: 'var(--fg-1)', lineHeight: 1.55,
+          display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+          border: '1px solid var(--border)',
+        }}>
+          剑术不太好，符卡背得熟。常驻 CN-East · 习惯打 Lunatic · 喜欢 ZUN 早期 OST · 偶尔录视频。
+        </div>
+
+        <div style={{ display: 'flex', gap: 6, marginTop: 14 }}>
+          <BtnP variant="primary" size="sm" style={{ flex: 1 }}><span className="cjk">发送私信</span></BtnP>
+          <BtnP variant="secondary" size="sm" style={{ flex: 1 }}><span className="cjk">邀请进房间</span></BtnP>
+          <button title="查看完整资料" style={{ width: 32, height: 28, borderRadius: 8, border: '1px solid var(--border-strong)', background: 'var(--bg-2)', color: 'var(--fg-1)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>⤢</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================
+// FULL PAGE
+function ProfileFull({ theme = 'dark' }) {
+  const uid = '100029481';
+  const [tab, setTab] = useStateP('recent');
+  return (
+    <div className={`thp theme-${theme}`} style={{ width: '100%', height: '100%', background: 'var(--bg-0)', overflow: 'auto', borderRadius: 'var(--r-lg)' }}>
+      <div style={{ maxWidth: 880, margin: '0 auto', padding: '0 32px 48px' }}>
+        {/* Hero */}
+        <div style={{ position: 'relative', marginTop: 24 }}>
+          <div style={{ height: 220, borderRadius: 'var(--r-lg)', background: uidGradient(uid) }} />
+          <div style={{ position: 'absolute', top: 16, right: 16, display: 'inline-flex', alignItems: 'center', gap: 6, height: 30, paddingInline: 10, borderRadius: 999, background: 'rgba(0,0,0,0.32)', backdropFilter: 'blur(8px)', color: '#fff', fontSize: 11.5, fontWeight: 600 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ADE80' }} />
+            <span className="cjk">在线 · 正在玩 永夜抄</span>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 18, marginTop: -50, padding: '0 16px' }}>
+          <div style={{ width: 124, height: 124, borderRadius: '50%', background: 'var(--bg-0)', padding: 6 }}>
+            <AvP size={112} name="妖梦" status="online" />
+          </div>
+          <div style={{ flex: 1, minWidth: 0, paddingBottom: 12 }}>
+            <h1 className="cjk" style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 26, color: 'var(--fg-0)', letterSpacing: '-0.015em' }}>魂魄妖梦</h1>
+            <div style={{ fontSize: 13, color: 'var(--fg-2)', fontFamily: 'var(--font-mono)', marginTop: 4 }}>@youmu · UID {uid}</div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, paddingBottom: 12 }}>
+            <BtnP variant="primary"><span className="cjk">发送私信</span></BtnP>
+            <BtnP variant="secondary"><span className="cjk">邀请进房间</span></BtnP>
+            <BtnP variant="ghost"><span style={{ fontSize: 16, lineHeight: 1 }}>⋯</span></BtnP>
+          </div>
+        </div>
+
+        {/* Identity card */}
+        <div style={{ marginTop: 28, background: 'var(--bg-1)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)' }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)' }}>
+            <div className="cjk" style={{ fontSize: 13, fontWeight: 800, color: 'var(--fg-0)' }}>身份信息</div>
+          </div>
+          <div style={{ padding: '4px 18px 14px' }}>
+            {[
+              { k: '用户名', v: <span className="cjk" style={{ color: 'var(--fg-0)', fontWeight: 600 }}>魂魄妖梦</span> },
+              { k: 'Handle', v: <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg-0)' }}>@youmu</span> },
+              { k: 'UID',    v: <CopyField value={uid} /> },
+              { k: '注册于', v: <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg-1)' }}>2026-04-26</span> },
+              { k: '绑定',   v: (
+                <span style={{ display: 'inline-flex', gap: 6 }}>
+                  <BindingDot kind="qq" linked />
+                  <BindingDot kind="discord" linked={false} />
+                  <BindingDot kind="github" linked />
+                </span>
+              ) },
+            ].map((r, i, arr) => (
+              <div key={r.k} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: i === arr.length - 1 ? 'none' : '1px solid var(--border)' }}>
+                <span className="cjk" style={{ fontSize: 12.5, color: 'var(--fg-2)' }}>{r.k}</span>
+                <span>{r.v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div style={{ marginTop: 22, background: 'var(--bg-1)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)' }}>
+          <div style={{ padding: '8px 18px 0' }}>
+            <TabsP
+              tabs={[
+                { id: 'recent', label: <span className="cjk">最近对局</span> },
+                { id: 'stats',  label: <span className="cjk">战绩</span> },
+                { id: 'tags',   label: <span className="cjk">标签</span> },
+                { id: 'rooms',  label: <span className="cjk">我的房间</span> },
+              ]}
+              active={tab} onChange={setTab}
+            />
+          </div>
+          <div style={{ padding: 18 }}>
+            {tab === 'recent' && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {[
+                  { d: '今天 21:42', game: 'TH08', r: '通关 2 面', mode: 'Lunatic · 魔理沙B', score: '4,128,920,470' },
+                  { d: '今天 19:08', game: 'TH08', r: '通关 4 面', mode: 'Hard · 灵梦A',     score: '2,840,110,300' },
+                  { d: '昨天 23:20', game: 'TH07', r: '通关 6 面', mode: 'Normal · 妖梦',     score: '1,802,540,000' },
+                  { d: '昨天 22:01', game: 'TH08', r: '中断',     mode: 'Lunatic · 魔理沙B', score: '—' },
+                  { d: '04-25',     game: 'TH06', r: 'Bad End',  mode: 'Hard · 灵梦B',      score: '982,310,720' },
+                ].map((g, i, arr) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: i === arr.length - 1 ? 'none' : '1px solid var(--border)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--fg-3)', width: 78 }}>{g.d}</span>
+                    <BdgP tone="brand">{g.game}</BdgP>
+                    <span className="cjk" style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-0)', minWidth: 92 }}>{g.r}</span>
+                    <span className="cjk" style={{ fontSize: 12, color: 'var(--fg-2)', flex: 1 }}>{g.mode}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--fg-1)', fontWeight: 600 }}>{g.score}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {tab === 'stats' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 16 }}>
+                  {[
+                    { k: '总对局', v: '247' },
+                    { k: '通关率', v: '68%' },
+                    { k: '平均得分', v: '2.4B' },
+                    { k: '最高 Lunatic', v: '4 面' },
+                  ].map(s => (
+                    <div key={s.k} style={{ background: 'var(--bg-2)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '12px 14px' }}>
+                      <div className="cjk" style={{ fontSize: 11, color: 'var(--fg-2)', fontWeight: 600 }}>{s.k}</div>
+                      <div style={{ fontSize: 18, color: 'var(--fg-0)', fontWeight: 700, fontFamily: 'var(--font-mono)', marginTop: 2 }}>{s.v}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: 14 }}>
+                  <div className="cjk" style={{ fontSize: 12, color: 'var(--fg-2)', fontWeight: 600, marginBottom: 8 }}>最近 14 天 · 每日得分</div>
+                  <svg viewBox="0 0 280 60" width="100%" height="60" preserveAspectRatio="none">
+                    <polyline points="0,40 20,32 40,38 60,22 80,28 100,18 120,30 140,16 160,24 180,12 200,20 220,8 240,14 260,6 280,18" fill="none" stroke="var(--brand)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+                    <polyline points="0,40 20,32 40,38 60,22 80,28 100,18 120,30 140,16 160,24 180,12 200,20 220,8 240,14 260,6 280,18 280,60 0,60" fill="var(--brand-soft)" stroke="none" />
+                  </svg>
+                </div>
+              </div>
+            )}
+            {tab === 'tags' && (
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <TagChip>永夜抄熟练</TagChip>
+                <TagChip>夜组</TagChip>
+                <TagChip>魔理沙B本命</TagChip>
+                <TagChip>Lunatic 党</TagChip>
+                <TagChip>CN-East</TagChip>
+              </div>
+            )}
+            {tab === 'rooms' && (
+              <div className="cjk" style={{ fontSize: 12.5, color: 'var(--fg-2)' }}>
+                你目前没有正在主持的房间。<span style={{ color: 'var(--brand)', fontWeight: 600, cursor: 'pointer' }}>开一桌？</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+window.ProfilePopover = ProfilePopover;
+window.ProfileFull = ProfileFull;

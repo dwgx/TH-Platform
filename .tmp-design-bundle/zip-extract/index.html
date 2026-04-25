@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TH-Platform · Lobby</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  html, body, #root { height: 100%; margin: 0; }
+  body {
+    font-family: 'Manrope', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    background: #f0eee9;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="ui.jsx"></script>
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel" src="lobby.jsx"></script>
+<script type="text/babel" src="room.jsx"></script>
+<script type="text/babel" src="group.jsx"></script>
+<script type="text/babel" src="dm.jsx"></script>
+<script type="text/babel" src="profile.jsx"></script>
+<script type="text/babel" src="settings.jsx"></script>
+<script type="text/babel" src="showcase.jsx"></script>
+
+<script type="text/babel">
+  const { Lobby, Room, Group, DM, ProfilePopover, ProfileFull, Settings, Showcase } = window;
+
+  function App() {
+    return (
+      <DesignCanvas>
+        <DCSection id="lobby" title="01 · Lobby" subtitle="Discord 4-column · TH08 selected · light + dark">
+          <DCArtboard id="lobby-dark" label="Dark · canonical" width={1440} height={900}>
+            <Lobby theme="dark" />
+          </DCArtboard>
+          <DCArtboard id="lobby-light" label="Light" width={1440} height={900}>
+            <Lobby theme="light" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="room" title="02 · Room" subtitle="Seats grid + parameters panel · LOBBY state primary, POST alt">
+          <DCArtboard id="room-dark" label="Dark · LOBBY state" width={1440} height={900}>
+            <Room theme="dark" state="lobby" />
+          </DCArtboard>
+          <DCArtboard id="room-light" label="Light · LOBBY state" width={1440} height={900}>
+            <Room theme="light" state="lobby" />
+          </DCArtboard>
+          <DCArtboard id="room-post" label="Dark · POST results" width={1440} height={900}>
+            <Room theme="dark" state="post" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="group" title="03 · Group / Channel" subtitle="夜组 community · #符卡攻略 + activity rail + room-share embed">
+          <DCArtboard id="group-dark" label="Dark · canonical" width={1440} height={900}>
+            <Group theme="dark" />
+          </DCArtboard>
+          <DCArtboard id="group-light" label="Light" width={1440} height={900}>
+            <Group theme="light" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="dm" title="04 · Friends + DM" subtitle="Home shape · Friends tabs and DM thread">
+          <DCArtboard id="friends-dark" label="Dark · Friends home" width={1440} height={900}>
+            <DM theme="dark" view="friends" />
+          </DCArtboard>
+          <DCArtboard id="dm-dark" label="Dark · DM thread" width={1440} height={900}>
+            <DM theme="dark" view="dm" />
+          </DCArtboard>
+          <DCArtboard id="friends-light" label="Light · Friends home" width={1440} height={900}>
+            <DM theme="light" view="friends" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="profile" title="05 · Profile" subtitle="Click-to-open popover (360px) and full page (max 880px)">
+          <DCArtboard id="prof-pop-dark" label="Popover · Dark" width={400} height={560}>
+            <div style={{ padding: 20, background: 'var(--bg-0)', minHeight: '100%' }} className="thp theme-dark">
+              <ProfilePopover theme="dark" />
+            </div>
+          </DCArtboard>
+          <DCArtboard id="prof-pop-light" label="Popover · Light" width={400} height={560}>
+            <div style={{ padding: 20, background: 'var(--bg-0)', minHeight: '100%' }} className="thp theme-light">
+              <ProfilePopover theme="light" />
+            </div>
+          </DCArtboard>
+          <DCArtboard id="prof-full-dark" label="Full page · Dark" width={1000} height={1100}>
+            <ProfileFull theme="dark" />
+          </DCArtboard>
+          <DCArtboard id="prof-full-light" label="Full page · Light" width={1000} height={1100}>
+            <ProfileFull theme="light" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="settings" title="06 · Settings" subtitle="Full-screen takeover · 218px nav rail · ESC to close">
+          <DCArtboard id="set-appear" label="Dark · 外观" width={1440} height={900}>
+            <Settings theme="dark" section="appear" />
+          </DCArtboard>
+          <DCArtboard id="set-account" label="Dark · 我的账号" width={1440} height={900}>
+            <Settings theme="dark" section="account" />
+          </DCArtboard>
+          <DCArtboard id="set-oauth" label="Dark · 第三方绑定" width={1440} height={900}>
+            <Settings theme="dark" section="oauth" />
+          </DCArtboard>
+          <DCArtboard id="set-inj" label="Dark · 注入器" width={1440} height={900}>
+            <Settings theme="dark" section="inj" />
+          </DCArtboard>
+          <DCArtboard id="set-lang" label="Light · 语言" width={1440} height={900}>
+            <Settings theme="light" section="lang" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="primitives" title="07 · Base components" subtitle="Button · Card · Avatar · Badge · Input">
+          <DCArtboard id="show-dark" label="Dark" width={720} height={760}>
+            <Showcase theme="dark" />
+          </DCArtboard>
+          <DCArtboard id="show-light" label="Light" width={720} height={760}>
+            <Showcase theme="light" />
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

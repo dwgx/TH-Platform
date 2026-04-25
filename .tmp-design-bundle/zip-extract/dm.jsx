@@ -1,0 +1,267 @@
+/* global React, UI, SHARED */
+// Friends home + DM page.
+
+const { useState: useStateD } = React;
+const { Avatar: AvD, Badge: BdgD, Icon: IcD, Button: BtnD, Input: InpD } = UI;
+const { ServerRail: RailD, Row: RowD, SectionLabel: SLD, Tabs: TabsD, IdentityCard: IdD, StatusDot: SDD, ChatMessage: CMD } = SHARED;
+
+const FRIENDS = [
+  { name: '十六夜咲夜', handle: 'sakuya',  status: 'online', activity: '正在玩 永夜抄 PvP — 北京' },
+  { name: '雾雨魔理沙', handle: 'marisa',  status: 'online', activity: 'TH08 · 萌新练习房' },
+  { name: '小野塚小町', handle: 'komachi', status: 'online', activity: '在线 · 大厅' },
+  { name: '河城荷取',   handle: 'nitori',  status: 'online', activity: 'TH08 · 闲逛中' },
+  { name: '博丽灵梦',   handle: 'reimu',   status: 'dnd',    activity: '勿扰 · 录视频' },
+  { name: '爱丽丝',     handle: 'alice',   status: 'idle',   activity: '挂机 30 分钟' },
+  { name: '蕾米莉亚',   handle: 'remilia', status: 'offline',activity: '离线' },
+  { name: '帕秋莉',     handle: 'patchouli',status:'offline',activity: '离线 · 上次 14:22' },
+];
+
+const DMS = [
+  { name: '十六夜咲夜', handle: 'sakuya',  status: 'online', last: '我开了一桌，进来吧', t: '21:07', unread: 2 },
+  { name: '雾雨魔理沙', handle: 'marisa',  status: 'online', last: '稳，先来一把试试手感', t: '21:09' },
+  { name: '小野塚小町', handle: 'komachi', status: 'online', last: '路过看看', t: '21:01' },
+  { name: '博丽灵梦',   handle: 'reimu',   status: 'dnd',    last: '今晚没空，明天约', t: '昨天' },
+  { name: '夜组小队 · 5 人', handle: null, group: true, last: '幽幽子: 集合咯', t: '昨天' },
+  { name: '河城荷取',   handle: 'nitori',  status: 'online', last: '👌', t: '昨天' },
+];
+
+const DM_STREAM = [
+  { who: '十六夜咲夜', t: '昨天 23:14', msg: '诶，你今晚有空吗' },
+  { who: '东方霖之助', t: '昨天 23:18', msg: '有，几点开打' },
+  { who: '十六夜咲夜', t: '昨天 23:18', msg: '21 点左右，先在 #组队 集合' },
+  { who: '十六夜咲夜', t: '昨天 23:18', msg: '我用咲夜，你用谁' },
+  { who: '东方霖之助', t: '昨天 23:21', msg: '魔理沙吧，B 装备顺手' },
+  { who: '十六夜咲夜', t: '今天 21:05', msg: '@rinnosuke 我开了一桌，进来吧', mention: 'rinnosuke' },
+  { who: '十六夜咲夜', t: '今天 21:07', msg: '永夜抄 PvP — 北京 · 4/6' },
+];
+
+function FriendsTabs({ tab, onChange }) {
+  const tabs = [
+    { id: 'online',  label: <span className="cjk">在线</span>,  count: FRIENDS.filter(f => f.status === 'online').length },
+    { id: 'all',     label: <span className="cjk">全部</span>,  count: FRIENDS.length },
+    { id: 'pending', label: <span className="cjk">待处理</span>, count: 2 },
+    { id: 'blocked', label: <span className="cjk">黑名单</span> },
+    { id: 'add',     label: <span className="cjk">添加好友</span>, success: true },
+  ];
+  return (
+    <div style={{
+      display: 'flex', gap: 6, padding: '12px 18px',
+      borderBottom: '1px solid var(--border)', background: 'var(--bg-0)',
+    }}>
+      <span className="cjk" style={{ fontSize: 14, fontWeight: 800, color: 'var(--fg-0)', display: 'flex', alignItems: 'center', gap: 8, paddingRight: 14, marginRight: 2, borderRight: '1px solid var(--border)' }}>
+        <span style={{ display: 'inline-flex' }}>👥</span>
+        <span>好友</span>
+      </span>
+      {tabs.map(t => {
+        const on = tab === t.id;
+        return (
+          <button
+            key={t.id}
+            onClick={() => onChange(t.id)}
+            style={{
+              height: 30, paddingInline: 10, gap: 6, borderRadius: 8, border: 'none',
+              display: 'inline-flex', alignItems: 'center',
+              background: on ? (t.success ? 'var(--success)' : 'var(--active)') : 'transparent',
+              color: on ? (t.success ? '#0E2A14' : 'var(--fg-0)') : t.success ? 'var(--success)' : 'var(--fg-1)',
+              fontSize: 12.5, fontWeight: 600,
+              fontFamily: 'var(--font-sans)', cursor: 'pointer',
+              border: t.success && !on ? '1px solid var(--success)' : 'none',
+            }}
+          >
+            {t.label}
+            {t.count != null ? <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, opacity: 0.85 }}>{t.count}</span> : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function FriendRow({ f }) {
+  const [hov, setHov] = useStateD(false);
+  return (
+    <div
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 12,
+        padding: '10px 16px',
+        borderTop: '1px solid var(--border)',
+        background: hov ? 'var(--hover)' : 'transparent',
+        cursor: 'pointer',
+      }}>
+      <AvD size={36} name={f.name} status={f.status} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+          <span className="cjk" style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--fg-0)' }}>{f.name}</span>
+          <span style={{ fontSize: 11, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)' }}>@{f.handle}</span>
+        </div>
+        <div className="cjk" style={{ fontSize: 11.5, color: 'var(--fg-2)', marginTop: 1 }}>{f.activity}</div>
+      </div>
+      <div style={{ display: 'flex', gap: 6, opacity: hov ? 1 : 0.45, transition: 'opacity .12s' }}>
+        <button title="发消息" style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-2)', border: '1px solid var(--border)', color: 'var(--fg-1)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>💬</button>
+        <button title="更多" style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-2)', border: '1px solid var(--border)', color: 'var(--fg-1)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>⋯</button>
+      </div>
+    </div>
+  );
+}
+
+function HomeSidebar({ activeView }) {
+  return (
+    <aside style={{ width: 240, background: 'var(--bg-1)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+      <div style={{ padding: 12, borderBottom: '1px solid var(--border)' }}>
+        <InpD leading={IcD.search} placeholder="查找或发起对话…" />
+      </div>
+      <div style={{ padding: 8, overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <RowD active={activeView === 'friends'} leading={<span style={{ display: 'inline-flex', width: 18, justifyContent: 'center' }}>👥</span>}>
+          <span className="cjk" style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--fg-0)' }}>好友</span>
+        </RowD>
+        <RowD style={{ opacity: 0.55 }} leading={<span style={{ display: 'inline-flex', width: 18, justifyContent: 'center' }}>{IcD.bolt}</span>}
+              trailing={<span style={{ fontSize: 10, color: 'var(--fg-3)', display: 'inline-flex', gap: 4, alignItems: 'center' }}>{IcD.lock} 即将</span>}>
+          <span style={{ fontSize: 13.5, color: 'var(--fg-2)' }}>Nitro</span>
+        </RowD>
+        <RowD style={{ opacity: 0.55 }} leading={<span style={{ display: 'inline-flex', width: 18, justifyContent: 'center' }}>🛍</span>}
+              trailing={<span style={{ fontSize: 10, color: 'var(--fg-3)', display: 'inline-flex', gap: 4, alignItems: 'center' }}>{IcD.lock} 即将</span>}>
+          <span className="cjk" style={{ fontSize: 13.5, color: 'var(--fg-2)' }}>商店</span>
+        </RowD>
+
+        <div style={{ marginTop: 8 }}>
+          <SLD right={<span style={{ color: 'var(--fg-3)', fontSize: 13, cursor: 'pointer' }}>+</span>} style={{ padding: '4px 10px' }}>私信</SLD>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginTop: 4 }}>
+            {DMS.map((d, i) => (
+              <RowD key={i} active={activeView === 'dm' && i === 0}
+                leading={d.group ? (
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--bg-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg-1)', fontSize: 13 }}>👥</div>
+                ) : (
+                  <AvD size={32} name={d.name} status={d.status} />
+                )}
+                trailing={d.unread ? <span style={{ minWidth: 18, height: 18, padding: '0 5px', borderRadius: 9, background: 'var(--danger)', color: '#fff', fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{d.unread}</span> : null}
+              >
+                <div className="cjk" style={{ fontSize: 13, fontWeight: d.unread ? 700 : 600, color: 'var(--fg-0)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.name}</div>
+                <div className="cjk" style={{ fontSize: 11, color: 'var(--fg-2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.last}</div>
+              </RowD>
+            ))}
+          </div>
+        </div>
+      </div>
+      <IdD />
+    </aside>
+  );
+}
+
+function FriendsHome() {
+  const [tab, setTab] = useStateD('online');
+  const visible = tab === 'all' ? FRIENDS : tab === 'online' ? FRIENDS.filter(f => f.status === 'online' || f.status === 'idle' || f.status === 'dnd') : [];
+  return (
+    <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--bg-0)' }}>
+      <FriendsTabs tab={tab} onChange={setTab} />
+      <div style={{ padding: '14px 18px 8px' }}>
+        <InpD leading={IcD.search} placeholder="搜索好友…" />
+      </div>
+      {tab === 'add' ? (
+        <div style={{ padding: '24px 32px', maxWidth: 720 }}>
+          <h2 className="cjk" style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, color: 'var(--fg-0)' }}>添加好友</h2>
+          <div className="cjk" style={{ fontSize: 13, color: 'var(--fg-2)', marginTop: 6, lineHeight: 1.5 }}>
+            输入 username#0000 格式的好友标签，或者直接 @handle。每天最多发送 50 条好友请求。
+          </div>
+          <div style={{ marginTop: 16, padding: 16, background: 'var(--bg-1)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)' }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ flex: 1 }}>
+                <InpD placeholder="username#0000  或  @handle" />
+              </div>
+              <BtnD variant="primary"><span className="cjk">发送好友请求</span></BtnD>
+            </div>
+            <div className="cjk" style={{ fontSize: 11.5, color: 'var(--fg-3)', marginTop: 8 }}>例：dwgx#0000 或 @dwgx</div>
+          </div>
+          <div style={{ marginTop: 22 }}>
+            <SLD right={<span style={{ fontSize: 11, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)' }}>2</span>} style={{ padding: 0 }}>待处理 · 收到</SLD>
+            <div style={{ marginTop: 8, background: 'var(--bg-1)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', overflow: 'hidden' }}>
+              {[
+                { name: '风见幽香', handle: 'yuuka', t: '2 分钟前' },
+                { name: '八云紫',   handle: 'yukari', t: '昨天 22:30' },
+              ].map((p, i) => (
+                <div key={i} style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12, borderTop: i === 0 ? 'none' : '1px solid var(--border)' }}>
+                  <AvD size={36} name={p.name} status="online" />
+                  <div style={{ flex: 1 }}>
+                    <div className="cjk" style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--fg-0)' }}>{p.name} <span style={{ color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500 }}>@{p.handle}</span></div>
+                    <div className="cjk" style={{ fontSize: 11.5, color: 'var(--fg-2)' }}>想要加你为好友 · {p.t}</div>
+                  </div>
+                  <BtnD variant="primary" size="sm"><span className="cjk">接受</span></BtnD>
+                  <BtnD variant="secondary" size="sm"><span className="cjk">拒绝</span></BtnD>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <SLD style={{ padding: '12px 18px 0' }}>
+            <span className="cjk">{tab === 'all' ? '全部好友' : '在线好友'} · </span>
+            <span style={{ fontFamily: 'var(--font-mono)' }}>{visible.length}</span>
+          </SLD>
+          <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid var(--border)', marginTop: 8 }}>
+            {visible.map((f, i) => <FriendRow key={i} f={f} />)}
+          </div>
+        </>
+      )}
+    </main>
+  );
+}
+
+function DMHeader({ name, handle, status }) {
+  return (
+    <div style={{ height: 56, paddingInline: 18, borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 12, background: 'var(--bg-0)' }}>
+      <AvD size={28} name={name} status={status} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="cjk" style={{ fontSize: 14, fontWeight: 800, color: 'var(--fg-0)' }}>{name}</div>
+        <div style={{ fontSize: 11, color: 'var(--fg-2)', fontFamily: 'var(--font-mono)' }}>@{handle} · <span style={{ color: status === 'online' ? 'var(--success)' : 'var(--fg-2)' }}>{status === 'online' ? '在线' : status}</span></div>
+      </div>
+      <BtnD variant="secondary" size="sm"><span className="cjk">查看资料</span></BtnD>
+      <button title="邀请进房间" style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--brand-soft)', border: 'none', color: 'var(--brand)', cursor: 'pointer', fontSize: 16 }}>＋</button>
+    </div>
+  );
+}
+
+function DMView() {
+  return (
+    <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--bg-0)' }}>
+      <DMHeader name="十六夜咲夜" handle="sakuya" status="online" />
+      <div style={{ flex: 1, overflowY: 'auto', padding: '18px 18px 8px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="cjk" style={{ fontSize: 11, color: 'var(--fg-3)', textAlign: 'center', padding: '6px 0' }}>—— 昨天 ——</div>
+        {DM_STREAM.map((m, i) => {
+          const prev = DM_STREAM[i-1];
+          const samegroup = prev && prev.who === m.who && !m.t.includes('今天');
+          return <CMD key={i} msg={m} samegroup={samegroup} />;
+        })}
+      </div>
+      <div style={{ padding: '0 18px 16px' }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: 'var(--bg-1)', border: '1px solid var(--border-strong)',
+          borderRadius: 'var(--r-md)', paddingInline: 12, height: 44,
+        }}>
+          <button title="邀请进房间" style={{
+            height: 26, paddingInline: 8, gap: 4, borderRadius: 999,
+            background: 'var(--brand-soft)', color: 'var(--brand)',
+            border: 'none', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center',
+          }}><span className="cjk">＋ 邀请进房间</span></button>
+          <input className="cjk" placeholder="发个消息给 @sakuya" style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--fg-0)', fontSize: 13.5 }} />
+          <button style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--fg-2)', cursor: 'pointer' }}>{IcD.smile}</button>
+          <button style={{ width: 30, height: 30, border: 'none', background: 'var(--brand)', color: '#fff', borderRadius: 8, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{IcD.send}</button>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function DM({ theme = 'dark', view = 'friends' }) {
+  return (
+    <div className={`thp theme-${theme}`} style={{ width: '100%', height: '100%', display: 'flex', background: 'var(--bg-0)', overflow: 'hidden', borderRadius: 'var(--r-lg)' }}>
+      <RailD active="home" />
+      <HomeSidebar activeView={view} />
+      {view === 'dm' ? <DMView /> : <FriendsHome />}
+    </div>
+  );
+}
+
+window.DM = DM;

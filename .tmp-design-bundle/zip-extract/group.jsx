@@ -1,0 +1,237 @@
+/* global React, UI, SHARED */
+// Group / Channel page — small Discord-server. 4-column shell.
+
+const { useState: useStateG } = React;
+const { Avatar: AvG, Badge: BdgG, Icon: IcG, Button: BtnG } = UI;
+const { ServerRail: RailG, Row: RowG, SectionLabel: SLG, ChannelRow: ChG, Tabs: TabsG, IdentityCard: IdG, ServerCardFlat: SCG, ChatMessage: CMG, StatusDot: SDG } = SHARED;
+
+const CHANNELS_TEXT = [
+  { id: 'announce', name: '公告',     muted: false },
+  { id: 'lobby',    name: 'lobby-th08', active: true, unread: false },
+  { id: 'chat',     name: '闲聊',     unread: true },
+  { id: 'spell',    name: '符卡攻略', mention: 3 },
+  { id: 'music',    name: '同人音乐' },
+  { id: 'recruit',  name: '组队',     unread: true },
+  { id: 'offtopic', name: '水群',     muted: true },
+];
+
+const ROLES = [
+  { name: '管理员', color: '#F5B544', members: ['幽幽子'] },
+  { name: '小管',   color: '#7C5CFF', members: ['咲夜','妖梦'] },
+  { name: '成员',   color: '#A4A8B8', members: ['魔理沙','灵梦','爱丽丝','蕾米莉亚','帕秋莉','藤原妹红','小野塚小町','河城荷取'] },
+];
+
+const STREAM = [
+  { who: '幽幽子', t: '20:42', msg: '今晚 21:00 永夜抄锦标赛，记得带咲夜或者妖梦。', reactions: [{ emoji: '🎯', count: 4, mine: true }, { emoji: '🌙', count: 2 }] },
+  { who: '咲夜',   t: '20:43', msg: '我开了一桌，等下分享出来' },
+  { who: '咲夜',   t: '20:44', msg: '@yuyuko 你来当主机吗', mention: 'yuyuko', share: { title: '永夜抄 PvP — 北京', host: '幽幽子', region: 'CN-East', ping: 24, diff: 'Lunatic', mode: 'Standard', taken: 4, total: 6, vis: 'public' } },
+  { who: '魔理沙', t: '20:51', msg: '稳，路上' },
+  { who: '魔理沙', t: '20:51', msg: '提前说一下我可能会迟到 5 分钟' },
+  { who: '爱丽丝', t: '20:55', msg: '本命永夜抄，必到', reactions: [{ emoji: '🌸', count: 3 }] },
+  { who: '小野塚小町', t: '21:01', msg: '路过看看，今晚带不动了，先观战' },
+];
+
+function GroupBanner() {
+  // Banner gradient is allowed (banner ≠ list-item cover).
+  return (
+    <div style={{ position: 'relative' }}>
+      <div style={{
+        height: 84,
+        background: 'linear-gradient(135deg, #4C3B7A 0%, #7C5CFF 60%, #4FD1C5 100%)',
+        borderRadius: '0 0 var(--r-md) var(--r-md)',
+        margin: 0,
+      }} />
+      <div style={{
+        position: 'absolute', left: 14, right: 14, bottom: -16,
+        background: 'var(--bg-1)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)',
+        padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10,
+        boxShadow: 'var(--shadow-sm)',
+        cursor: 'pointer',
+      }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: 8,
+          background: 'linear-gradient(135deg, #7C5CFF 0%, #4FD1C5 100%)',
+          color: '#fff', fontWeight: 800, fontSize: 13, display: 'flex',
+          alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>夜</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="cjk" style={{ fontSize: 14, fontWeight: 800, color: 'var(--fg-0)' }}>夜组</div>
+          <div style={{ fontSize: 11, color: 'var(--fg-2)' }}>
+            <span className="cjk">成员</span> <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>247</span>
+            <span style={{ color: 'var(--fg-3)', margin: '0 6px' }}>·</span>
+            <span style={{ color: 'var(--success)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>32 online</span>
+          </div>
+        </div>
+        <span style={{ color: 'var(--fg-2)' }}>{IcG.chevron}</span>
+      </div>
+    </div>
+  );
+}
+
+function GroupSidebar() {
+  return (
+    <aside style={{ width: 240, background: 'var(--bg-1)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+      <GroupBanner />
+      <div style={{ padding: '28px 8px 8px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div>
+          <SLG right={<span style={{ color: 'var(--fg-3)', fontSize: 12, cursor: 'pointer' }}>+</span>}>文字频道</SLG>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginTop: 6 }}>
+            {CHANNELS_TEXT.map(c => <ChG key={c.id} {...c} />)}
+          </div>
+        </div>
+        <div>
+          <SLG>成员 · 32</SLG>
+          <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {ROLES.map(r => (
+              <div key={r.name}>
+                <div style={{ padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span className="cjk" style={{ fontSize: 11, fontWeight: 700, color: r.color }}>{r.name} · <span style={{ fontFamily: 'var(--font-mono)' }}>{r.members.length}</span></span>
+                </div>
+                <div style={{ display: 'flex', gap: 4, padding: '0 10px', flexWrap: 'wrap' }}>
+                  {r.members.slice(0, 6).map((m, i) => <AvG key={i} size={22} name={m} status={i % 3 === 0 ? 'online' : i % 3 === 1 ? 'away' : null} />)}
+                  {r.members.length > 6 ? <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--bg-2)', color: 'var(--fg-2)', fontSize: 10, fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+{r.members.length - 6}</span> : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div style={{ padding: 10 }}>
+        <BtnG variant="secondary" size="md" style={{ width: '100%' }}><span className="cjk">邀请朋友</span></BtnG>
+      </div>
+      <IdG />
+    </aside>
+  );
+}
+
+function ChannelHeader() {
+  return (
+    <div style={{ height: 56, paddingInline: 18, borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 14, background: 'var(--bg-0)' }}>
+      <span style={{ color: 'var(--fg-2)', fontWeight: 600, fontSize: 18, lineHeight: 1 }}>#</span>
+      <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--fg-0)' }}>lobby-th08</span>
+      <span style={{ width: 1, height: 16, background: 'var(--border)' }} />
+      <span className="cjk" style={{ fontSize: 12, color: 'var(--fg-2)', flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>聊东方音乐和同人作品 · 房间分享请发到 #组队</span>
+      <span style={{ fontSize: 11, color: 'var(--fg-2)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+        <SDG status="online" /> <span style={{ fontFamily: 'var(--font-mono)' }}>32</span> online
+      </span>
+      <button title="搜索" style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--bg-2)', border: '1px solid var(--border)', color: 'var(--fg-1)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{IcG.search}</button>
+      <button title="置顶" style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--bg-2)', border: '1px solid var(--border)', color: 'var(--fg-1)', cursor: 'pointer' }}>📌</button>
+    </div>
+  );
+}
+
+function GroupChat() {
+  return (
+    <div style={{ flex: 1, overflowY: 'auto', padding: '16px 18px 12px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {STREAM.map((m, i) => {
+        const prev = STREAM[i-1];
+        // group consecutive within 7 minutes (mock check: prev.who === m.who)
+        const samegroup = prev && prev.who === m.who;
+        return (
+          <div key={i}>
+            <CMG msg={m} samegroup={samegroup} />
+            {m.share ? (
+              <div style={{ marginLeft: 38, marginTop: 6 }}>
+                <SCG {...m.share} />
+              </div>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function GroupComposer() {
+  return (
+    <div style={{ padding: '0 18px 16px' }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 8,
+        background: 'var(--bg-1)', border: '1px solid var(--border-strong)',
+        borderRadius: 'var(--r-md)', paddingInline: 12, height: 44,
+      }}>
+        <button title="分享房间" style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'var(--brand-soft)', color: 'var(--brand)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>＋</button>
+        <input className="cjk" placeholder="发个消息到 #lobby-th08" style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--fg-0)', fontSize: 13.5 }} />
+        <button style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--fg-2)', cursor: 'pointer' }}>{IcG.smile}</button>
+        <button style={{ width: 30, height: 30, border: 'none', background: 'var(--brand)', color: '#fff', borderRadius: 8, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{IcG.send}</button>
+      </div>
+      <div style={{ marginTop: 6, fontSize: 10.5, color: 'var(--fg-3)', display: 'flex', gap: 12 }}>
+        <span className="cjk">仅支持文字与表情 · 分享房间 /share</span>
+      </div>
+    </div>
+  );
+}
+
+function ActivityPanel() {
+  return (
+    <aside style={{ width: 280, background: 'var(--bg-1)', borderLeft: '1px solid var(--border)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+      <div style={{ padding: '14px 14px 10px', borderBottom: '1px solid var(--border)' }}>
+        <div className="cjk" style={{ fontSize: 14, fontWeight: 800, color: 'var(--fg-0)' }}>群组动态</div>
+      </div>
+      <div style={{ padding: 12, overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div>
+          <SLG>公告</SLG>
+          <div style={{
+            marginTop: 6, padding: '10px 12px',
+            background: 'var(--bg-2)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)',
+          }}>
+            <div className="cjk" style={{ fontSize: 11.5, color: 'var(--warning)', fontWeight: 700, marginBottom: 4 }}>📢 周五锦标赛</div>
+            <div className="cjk" style={{ fontSize: 12, color: 'var(--fg-1)', lineHeight: 1.55 }}>每周五晚 21:00 在 #组队 集合，胜者拿走整桌的奶茶券。</div>
+          </div>
+        </div>
+        <div>
+          <SLG right={<span style={{ fontSize: 10, color: 'var(--fg-3)' }}>查看全部</span>}>房间分享</SLG>
+          <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: 10 }}>
+              <div className="cjk" style={{ fontSize: 11.5, color: 'var(--fg-2)' }}><span style={{ color: 'var(--fg-1)', fontWeight: 600 }}>咲夜</span> 分享了一个房间</div>
+              <div className="cjk" style={{ fontSize: 13, color: 'var(--fg-0)', fontWeight: 700, marginTop: 4 }}>永夜抄 PvP — 北京</div>
+              <div style={{ fontSize: 11, color: 'var(--fg-2)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>4/6 · 24ms · CN-East</div>
+            </div>
+            <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: 10 }}>
+              <div className="cjk" style={{ fontSize: 11.5, color: 'var(--fg-2)' }}><span style={{ color: 'var(--fg-1)', fontWeight: 600 }}>魔理沙</span> 分享了一个房间</div>
+              <div className="cjk" style={{ fontSize: 13, color: 'var(--fg-0)', fontWeight: 700, marginTop: 4 }}>萌新练习房 · 慢慢打</div>
+              <div style={{ fontSize: 11, color: 'var(--fg-2)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>2/4 · 19ms · CN-East</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <SLG>上线 / 下线</SLG>
+          <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {[
+              { t: '21:08', who: '小野塚小町', kind: 'on' },
+              { t: '21:04', who: '河城荷取',   kind: 'on' },
+              { t: '20:58', who: '爱丽丝',     kind: 'on' },
+              { t: '20:45', who: '帕秋莉',     kind: 'off' },
+              { t: '20:31', who: '蕾米莉亚',   kind: 'on' },
+              { t: '20:12', who: '藤原妹红',   kind: 'off' },
+            ].map((e, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, fontSize: 11.5, alignItems: 'center', padding: '4px 6px', borderRadius: 6 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg-3)', fontSize: 10 }}>{e.t}</span>
+                <SDG status={e.kind === 'on' ? 'online' : 'offline'} />
+                <span className="cjk" style={{ color: 'var(--fg-1)' }}>{e.who}</span>
+                <span className="cjk" style={{ color: 'var(--fg-2)', fontSize: 11 }}>{e.kind === 'on' ? '上线' : '下线'}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function Group({ theme = 'dark' }) {
+  return (
+    <div className={`thp theme-${theme}`} style={{ width: '100%', height: '100%', display: 'flex', background: 'var(--bg-0)', overflow: 'hidden', borderRadius: 'var(--r-lg)' }}>
+      <RailG active="th08" />
+      <GroupSidebar />
+      <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <ChannelHeader />
+        <GroupChat />
+        <GroupComposer />
+      </main>
+      <ActivityPanel />
+    </div>
+  );
+}
+
+window.Group = Group;

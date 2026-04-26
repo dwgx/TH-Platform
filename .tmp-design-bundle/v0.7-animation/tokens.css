@@ -1,5 +1,5 @@
 /* ============================================================
-   TH-Platform tokens v0.7 — monochrome reforge + motion + typography.
+   TH-Platform tokens v0.6 — monochrome reforge.
    Codex / Claude Code aesthetic: gray-black, gray-white, steel-silver.
    Pure neutral grayscale (no blue cast, no violet cast).
    ONE accent (cool steel-silver) used sparingly.
@@ -111,14 +111,17 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Page-content entrance — body areas, not chrome */
   @keyframes thp-page-in {
     from { opacity: 0.85; transform: translateY(4px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  /* List item stagger */
   @keyframes thp-row-in {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  /* Modal/popover */
   @keyframes thp-modal-in {
     from { opacity: 0; transform: scale(0.98); }
     to   { opacity: 1; transform: scale(1); }
@@ -126,6 +129,7 @@
   @keyframes thp-backdrop-in {
     from { opacity: 0; } to { opacity: 1; }
   }
+  /* Toast */
   @keyframes thp-toast-in {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -134,41 +138,51 @@
     from { opacity: 1; transform: translateY(0); }
     to   { opacity: 0; transform: translateY(4px); }
   }
+  /* Avatar online dot pulse */
   @keyframes thp-online-pulse {
     0%   { box-shadow: 0 0 0 0 var(--status-online); }
     70%  { box-shadow: 0 0 0 6px transparent; }
     100% { box-shadow: 0 0 0 0 transparent; }
   }
+  /* Send button ripple */
   @keyframes thp-ripple {
     from { transform: scale(0); opacity: 0.4; }
     to   { transform: scale(1); opacity: 0; }
   }
+  /* Seat READY pulse */
   @keyframes thp-ready-pulse {
     0%   { background: var(--accent-soft); }
     100% { background: transparent; }
   }
+  /* Skeleton shimmer */
   @keyframes thp-shimmer {
     0%   { background-position: -200px 0; }
     100% { background-position: calc(200px + 100%) 0; }
   }
+  /* Spinner */
   @keyframes thp-spin { to { transform: rotate(360deg); } }
+  /* Mic speaking pulse */
   @keyframes thp-mic-pulse {
     0%, 100% { opacity: 0.55; }
     50%      { opacity: 1; }
   }
+  /* Typing dots */
   @keyframes thp-typing-dot {
     0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
     30%           { opacity: 1;   transform: translateY(-2px); }
   }
+  /* Start-button glow when ready */
   @keyframes thp-cta-glow {
     0%, 100% { box-shadow: 0 0 0 0 transparent; }
     50%      { box-shadow: 0 0 0 4px var(--accent-ring); }
   }
+  /* Tooltip fade */
   @keyframes thp-tooltip-in {
     from { opacity: 0; transform: translateY(2px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* ----- Application classes ----- */
   .thp .anim-page-in   { animation: thp-page-in var(--duration-mid) var(--ease-out-quart) both; }
   .thp .anim-row-in    { animation: thp-row-in 200ms var(--ease-out-quart) both; animation-delay: calc(var(--i, 0) * 24ms); }
   .thp .anim-modal-in  { animation: thp-modal-in 180ms var(--ease-spring) both; }
@@ -180,28 +194,38 @@
   .thp .anim-mic-pulse { animation: thp-mic-pulse 1200ms ease-in-out infinite; }
   .thp .anim-tooltip   { animation: thp-tooltip-in var(--duration-mid) var(--ease-out-quart) both; }
 
+  .thp .has-online-dot::after { animation: thp-online-pulse 1.6s ease-out infinite; }
+
+  /* Hover slide for rows */
   .thp .row-hoverable {
     transition: background var(--duration-fast) var(--ease-out-quart),
                 transform  var(--duration-fast) var(--ease-out-quart);
   }
-  .thp .row-hoverable:hover { transform: translateX(2px); background: var(--hover); }
+  .thp .row-hoverable:hover { transform: translateX(2px); }
 
+  /* Button press */
   .thp .btn-pressable { transition: transform 80ms ease, background var(--duration-fast) var(--ease-out-quart), border-color var(--duration-fast) var(--ease-out-quart); }
   .thp .btn-pressable:active { transform: scale(0.97); }
 
+  /* Tab indicator slide */
   .thp .tab-indicator { transition: left var(--duration-mid) var(--ease-out-quart), width var(--duration-mid) var(--ease-out-quart); }
-  .thp .toggle-thumb  { transition: left 220ms var(--ease-spring), background var(--duration-fast) linear; }
 
+  /* Toggle thumb */
+  .thp .toggle-thumb { transition: left 220ms var(--ease-spring), background var(--duration-fast) linear; }
+
+  /* Skeleton */
   .thp .skeleton {
     background: linear-gradient(90deg, var(--bg-2) 0%, var(--bg-3) 50%, var(--bg-2) 100%);
     background-size: 200px 100%;
     animation: thp-shimmer 1.5s linear infinite;
   }
 
+  /* Typing dots */
   .thp .typing-dot { animation: thp-typing-dot 1.2s ease-in-out infinite both; }
   .thp .typing-dot:nth-child(2) { animation-delay: 150ms; }
   .thp .typing-dot:nth-child(3) { animation-delay: 300ms; }
 
+  /* Spinner */
   .thp .spinner { animation: thp-spin 0.8s linear infinite; }
 }
 

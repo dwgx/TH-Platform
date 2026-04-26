@@ -134,7 +134,7 @@ function FriendsHome({ active = 'online', onMessage, onAddFriend }: any) {
   );
 }
 
-function DMThread({ peer, onCall, onPin, onAddUser }: any) {
+function DMThread({ peer, onPin, onAddUser }: any) {
   return (
     <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--bg-0)' }}>
       <div style={{ height: 48, paddingInline: 18, display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid var(--border)' }}>
@@ -144,7 +144,6 @@ function DMThread({ peer, onCall, onPin, onAddUser }: any) {
           <div className="cjk t-caption" style={{ color: 'var(--fg-2)' }}>{peer.subtle}</div>
         </div>
         <span style={{ flex: 1 }} />
-        <button title="语音通话" onClick={onCall} className="btn-pressable" style={{ width: 28, height: 28, border: '1px solid var(--border)', background: 'var(--bg-2)', color: 'var(--fg-1)', borderRadius: 6, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Lu name="phone" size={13} /></button>
         <button title="置顶" onClick={onPin} className="btn-pressable" style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--fg-2)', borderRadius: 6, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Lu name="pin" size={13} /></button>
         <button title="邀请群聊" onClick={onAddUser} className="btn-pressable" style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--fg-2)', borderRadius: 6, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Lu name="user-plus" size={13} /></button>
       </div>
@@ -245,7 +244,7 @@ function DM({ theme = 'dark', view = 'friends', peer, onNavigate, onToast }: DMP
         else nav({ name: 'dm', view: 'dm', peer: handle });
       }} />
       {view === 'dm' && peerObj
-        ? <DMThread peer={peerObj} onCall={() => stub('语音通话')} onPin={() => stub('置顶对话')} onAddUser={() => stub('邀请进群聊')} />
+        ? <DMThread peer={peerObj} onPin={() => stub('置顶对话')} onAddUser={() => stub('邀请进群聊')} />
         : <FriendsHome active="online" onMessage={(handle: string) => nav({ name: 'dm', view: 'dm', peer: handle })} onAddFriend={() => stub('添加好友')} />}
     </div>
   );

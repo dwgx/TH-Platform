@@ -24,17 +24,12 @@ const CATS = [
     { id: 'replay', label: '录像点评' },
     { id: 'tools', label: '工具与下载' },
   ]},
-  { id: 'voice', label: '语音频道', icon: 'volume-2', items: [
-    { id: 'v1', label: 'Lunatic 集训', voice: true, count: 5 },
-    { id: 'v2', label: '深夜车队', voice: true, count: 0 },
-    { id: 'v3', label: 'AFK 挂机', voice: true, count: 2 },
-  ]},
 ];
 
 const ANNOUNCEMENT = {
   pinnedBy: '幽幽子', time: '昨天 22:14',
   title: '本周永夜抄 Lunatic 集训安排',
-  body: '周三 21:00 准时在 Lunatic 集训 语音频道集合，主攻 5 面与 6A 路线。本周新增 4B（魔理沙 + 爱丽丝）路线讨论，自带录像。\n\n报名截止：周三 18:00。报名表见 #活动日程。',
+  body: '周三 21:00 准时集合，主攻 5 面与 6A 路线。本周新增 4B（魔理沙 + 爱丽丝）路线讨论，自带录像。\n\n报名截止：周三 18:00。报名表见 #活动日程。',
 };
 
 const GROUP_MSGS = [
@@ -42,30 +37,16 @@ const GROUP_MSGS = [
   { who: '魔理沙', t: '20:55', msg: '我可以陪打 但是 5 面我经常死在 Reisen 那张符卡' },
   { who: '咲夜', t: '20:55', msg: '那张符卡其实是规律弹 我录屏给你看下', samegroup: true },
   { kind: 'embed', t: '20:56' },
-  { who: '幽幽子', t: '21:00', msg: '@everyone 集训开始 上语音吧', mention: 'everyone' },
+  { who: '幽幽子', t: '21:00', msg: '@everyone 集训开始', mention: 'everyone' },
 ];
 
-function ChannelRow({ item, type, index = 0, onClick }: any) {
-  const lead = type === 'voice'
-    ? <Lu name="volume-2" size={13} color="var(--fg-2)" />
-    : <span style={{ color: 'var(--fg-2)', fontWeight: 500, fontSize: 14, width: 14, textAlign: 'center' }}>#</span>;
-  const tail = type === 'voice'
-    ? (item.count > 0 ? <span className="num" style={{ fontSize: 10.5, color: 'var(--fg-2)' }}>{item.count}/12</span> : null)
-    : (item.unread ? <BdgG count={item.unread} /> : item.tag ? <span className="cjk" style={{ fontSize: 9.5, color: 'var(--fg-2)', padding: '1px 6px', border: '1px solid var(--border)', borderRadius: 3, background: 'var(--bg-1)' }}>{item.tag}</span> : null);
+function ChannelRow({ item, index = 0, onClick }: any) {
+  const lead = <span style={{ color: 'var(--fg-2)', fontWeight: 500, fontSize: 14, width: 14, textAlign: 'center' }}>#</span>;
+  const tail = item.unread ? <BdgG count={item.unread} /> : item.tag ? <span className="cjk" style={{ fontSize: 9.5, color: 'var(--fg-2)', padding: '1px 6px', border: '1px solid var(--border)', borderRadius: 3, background: 'var(--bg-1)' }}>{item.tag}</span> : null;
   return (
     <RowG active={item.active} onClick={onClick} leading={lead} trailing={tail} animateIn index={index}>
       <span className="cjk t-body" style={{ fontWeight: item.active ? 600 : 500, color: item.active ? 'var(--fg-0)' : 'var(--fg-1)' }}>{item.label}</span>
     </RowG>
-  );
-}
-
-function VoiceUserChip({ name, speaking }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '3px 6px 3px 4px', borderRadius: 999, marginLeft: 22, marginTop: 2 }}>
-      <span style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--bg-2)', border: `1px solid ${speaking ? 'var(--fg-1)' : 'var(--border)'}`, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 600, color: 'var(--fg-1)' }} className="cjk">{name.slice(0,1)}</span>
-      <span className="cjk t-caption" style={{ color: speaking ? 'var(--fg-0)' : 'var(--fg-1)', fontWeight: speaking ? 600 : 500 }}>{name}</span>
-      {speaking ? <span className="anim-mic-pulse" style={{ display: 'inline-flex' }}><Lu name="mic" size={9} color="var(--fg-1)" /></span> : null}
-    </div>
   );
 }
 
@@ -174,24 +155,7 @@ function Group({ theme = 'dark', handle = 'yegumi', onNavigate, onToast }: Group
               </div>
               <div>
                 {cat.items.map((item, j) => (
-                  <div key={item.id}>
-                    <ChannelRow item={item} type={cat.id === 'voice' ? 'voice' : 'text'} index={j} onClick={() => stub(cat.id === 'voice' ? `加入语音 ${item.label}` : `切换到 #${item.label}`)} />
-                    {cat.id === 'voice' && item.id === 'v1' && (
-                      <div style={{ marginBottom: 4 }}>
-                        <VoiceUserChip name="幽幽子" speaking />
-                        <VoiceUserChip name="妖梦" />
-                        <VoiceUserChip name="魔理沙" speaking />
-                        <VoiceUserChip name="爱丽丝" />
-                        <VoiceUserChip name="蕾米莉亚" />
-                      </div>
-                    )}
-                    {cat.id === 'voice' && item.id === 'v3' && (
-                      <div style={{ marginBottom: 4 }}>
-                        <VoiceUserChip name="帕秋莉" />
-                        <VoiceUserChip name="十六夜咲夜" />
-                      </div>
-                    )}
-                  </div>
+                  <ChannelRow key={item.id} item={item} index={j} onClick={() => stub(`切换到 #${item.label}`)} />
                 ))}
               </div>
             </div>

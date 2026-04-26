@@ -17,7 +17,6 @@ const NAV = [
   { id: 'notif',    label: '通知',         icon: 'bell' },
   { id: 'inject',   label: '游戏注入器',   icon: 'cpu' },
   { id: 'net',      label: '网络',         icon: 'globe' },
-  { id: 'voice',    label: '语音视频',     icon: 'mic' },
   { id: 'kbd',      label: '快捷键',       icon: 'keyboard' },
   { id: 'about',    label: '关于',         icon: 'info' },
 ];
@@ -349,7 +348,7 @@ function Settings({ theme = 'dark', section = 'appear', onClose, onSetTheme, onT
           <div style={{ height: 1, background: 'var(--border)', margin: '10px 4px' }} />
           <div className="t-tag" style={{ color: 'var(--fg-2)', paddingLeft: 6, marginBottom: 4 }}>应用</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {NAV.slice(3, 11).map(n => (
+            {NAV.slice(3, 10).map(n => (
               <button key={n.id} onClick={() => setActive(n.id)} className="btn-pressable row-hoverable" style={{
                 width: '100%', textAlign: 'left',
                 display: 'flex', alignItems: 'center', gap: 10,

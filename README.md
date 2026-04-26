@@ -21,6 +21,8 @@ Mock data only.
 
 Tauri 2 wrapper comes once the visual language is locked.
 
+Tauri 2 scaffold is now included for the native Windows shell. Install the Rust toolchain and Microsoft C++ Build Tools first, then run `npm run tauri:dev` from this folder to start Tauri; it will launch the existing Vite dev server via `npm run dev` on `http://localhost:5173` and load that URL inside the native desktop window. For production packaging later, `npm run tauri:build` will build the Vite app and produce Windows installers from the bundled `dist/` output.
+
 ## Run
 
 ```sh

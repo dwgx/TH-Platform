@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Sun, Moon, Monitor } from 'lucide-react';
 import { Lobby } from '@/pages/lobby';
 import { Room } from '@/pages/room';
 import { Group } from '@/pages/group';
@@ -96,7 +97,7 @@ function DevSwitcher({
         alignItems: 'flex-end',
         gap: 8,
         fontFamily:
-          "'Plus Jakarta Sans', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif",
+          "'Manrope', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif",
       }}
     >
       <div
@@ -105,14 +106,15 @@ function DevSwitcher({
           gap: 4,
           padding: 4,
           borderRadius: 999,
-          background: 'rgba(20, 22, 36, 0.85)',
-          border: '1px solid rgba(255, 255, 255, 0.10)',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+          background: 'rgba(15, 16, 20, 0.92)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 8px 20px rgba(0,0,0,0.30)',
           backdropFilter: 'blur(12px)',
         }}
       >
         {(['light', 'dark', 'system'] as Theme[]).map((m) => {
           const active = theme === m;
+          const Icon = m === 'light' ? Sun : m === 'dark' ? Moon : Monitor;
           return (
             <button
               key={m}
@@ -124,15 +126,14 @@ function DevSwitcher({
                 placeItems: 'center',
                 borderRadius: 999,
                 border: 'none',
-                background: active ? '#7C5CFF' : 'transparent',
-                color: active ? '#fff' : 'rgba(255,255,255,0.7)',
+                background: active ? '#C8CDD3' : 'transparent',
+                color: active ? '#0A0B0D' : 'rgba(236,237,239,0.7)',
                 cursor: 'pointer',
-                fontSize: 14,
                 lineHeight: 1,
               }}
               title={m}
             >
-              {m === 'light' ? '☀' : m === 'dark' ? '☾' : '⌂'}
+              <Icon size={14} strokeWidth={1.75} />
             </button>
           );
         })}
@@ -146,9 +147,9 @@ function DevSwitcher({
           justifyContent: 'flex-end',
           padding: 6,
           borderRadius: 12,
-          background: 'rgba(20, 22, 36, 0.85)',
-          border: '1px solid rgba(255, 255, 255, 0.10)',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+          background: 'rgba(15, 16, 20, 0.92)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 8px 20px rgba(0,0,0,0.30)',
           backdropFilter: 'blur(12px)',
         }}
       >
@@ -162,10 +163,12 @@ function DevSwitcher({
                 height: 24,
                 paddingInline: 9,
                 borderRadius: 6,
-                border: 'none',
-                background: active ? '#7C5CFF' : 'rgba(255,255,255,0.06)',
-                color: active ? '#fff' : 'rgba(255,255,255,0.78)',
+                border: '1px solid',
+                borderColor: active ? '#C8CDD3' : 'rgba(255,255,255,0.06)',
+                background: active ? '#C8CDD3' : 'rgba(255,255,255,0.04)',
+                color: active ? '#0A0B0D' : 'rgba(236,237,239,0.78)',
                 fontSize: 11.5,
+                fontFamily: "'Manrope', system-ui, sans-serif",
                 fontWeight: 600,
                 cursor: 'pointer',
               }}

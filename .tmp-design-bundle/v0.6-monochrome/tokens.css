@@ -97,5 +97,3 @@
 .thp .cjk:lang(zh), .thp .cjk { font-family: 'PingFang SC', 'Microsoft YaHei', var(--font-sans); }
 .thp .mono { font-family: var(--font-mono); font-feature-settings: 'tnum'; }
 .thp .uppercase-tag { font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
-
-@keyframes thp-spin { to { transform: rotate(360deg); } }

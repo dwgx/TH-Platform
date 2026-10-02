@@ -2,7 +2,7 @@
 // it consistently. Swap to real fetch in client.ts when backend lands.
 
 import type {
-  Room, Friend, PendingFriend, Seat, ChatMsg, Channel, ChannelCategory,
+  Room, Friend, PendingFriend, Seat, ChatMsg, ChannelCategory,
   Group, Profile, Announcement,
 } from './types';
 

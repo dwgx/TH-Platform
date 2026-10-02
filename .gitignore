@@ -38,3 +38,16 @@ yarn-error.log*
 
 # design scratch bundle
 .tmp-design-bundle/
+
+# stray MSVC object files from ad-hoc cl.exe invocations. The real build output
+# lives in %TEMP%\th08build and is never meant to be tracked.
+*.obj
+*.pdb
+*.ilk
+*.exe
+
+# game install junctions created for two-instance testing
+th08game*
+
+# per-process game logs
+log_pid*.txt

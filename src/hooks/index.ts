@@ -67,5 +67,14 @@ export function useMe() {
 }
 
 export function useProfile(handle: string) {
-  return useAsync(() => api.getProfile(handle), [handle]);
+  // GET /v1/users/{handle}, or `undefined` without asking when there is no
+  // handle. Callers reach for this as a fallback while a friend list is still
+  // loading, and an empty handle would issue `GET /v1/users/` — a guaranteed
+  // 404, logged as a warning, on every page that merely *might* need a profile
+  // later. Resolving to undefined keeps `data` meaning "not asked yet" instead
+  // of "asked and failed".
+  return useAsync(
+    () => (handle ? api.getProfile(handle) : Promise.resolve(undefined)),
+    [handle],
+  );
 }

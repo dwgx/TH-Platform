@@ -6,7 +6,8 @@ authors = ["dwgx"]
 license = ""
 repository = ""
 edition = "2021"
-rust-version = "1.77.2"
+# `std::sync::LazyLock` (used in loader.rs) stabilised in 1.80.
+rust-version = "1.80.0"
 
 [build-dependencies]
 tauri-build = { version = "2.5.6" }
@@ -24,4 +25,5 @@ windows = { version = "0.59", features = [
   "Win32_System_LibraryLoader",
   "Win32_System_Memory",
   "Win32_System_Threading",
+  "Win32_UI_Shell",
 ] }

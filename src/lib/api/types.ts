@@ -27,6 +27,32 @@ export interface Room {
   total: number;
   vis: Visibility;
   state?: RoomState;
+  /** Absent until the room's host publishes where it is listening. */
+  endpoint?: RoomEndpoint;
+}
+
+/**
+ * Where a room's host is reachable right now.
+ *
+ * The address and the port arrive together or not at all, and the session id
+ * names the host's game session: a host that restarts its game republishes on
+ * the same address, so `addr` alone cannot tell a peer whether the process
+ * behind it is the one it was told about.
+ */
+export interface RoomEndpoint {
+  addr: string;
+  port: number;
+  sessionId: string;
+}
+
+/**
+ * The `ip:port` string both loaders and the DLL take, or '' when the room has
+ * no endpoint. Brackets an IPv6 literal, because the loaders hand this straight
+ * to the socket layer.
+ */
+export function peerAddr(endpoint?: RoomEndpoint | null): string {
+  if (!endpoint?.addr) return '';
+  return endpoint.addr.includes(':') ? `[${endpoint.addr}]:${endpoint.port}` : `${endpoint.addr}:${endpoint.port}`;
 }
 
 export interface Friend {

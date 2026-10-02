@@ -13,11 +13,97 @@
   --font-display: 'Manrope', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
+  /* Overwritten by the class the user picked in Settings (src/lib/prefs.ts).
+     These three are the shipped defaults, restated here so the preference and
+     the stylesheet cannot disagree about what "app" means. */
+  --ui-scale: 1;
+  --lh-body-base: 1.55;
+  --row-stagger: 24ms;
+
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 14px;
   --r-xl: 18px;
   --r-pill: 999px;
+}
+
+/* ---------- INTERFACE FONT (设置 > 外观 > 显示字体) ----------
+   Settings offered three font swatches with no handler, so pressing one changed
+   nothing while the card lit up as if it had. The two non-default stacks name
+   fonts that are not guaranteed to be installed, so Settings asks the browser
+   and disables the swatch when the answer is no; these classes are the real
+   effect of the ones that are available. */
+:root.thp-font-app {
+  --font-sans: 'Manrope', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-display: 'Manrope', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+}
+:root.thp-font-source-han {
+  --font-sans: 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-display: 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+:root.thp-font-lxgw {
+  --font-sans: 'LXGW WenKai', 'Kaiti SC', 'KaiTi', 'STKaiti', 'PingFang SC', serif;
+  --font-display: 'LXGW WenKai', 'Kaiti SC', 'KaiTi', 'STKaiti', 'PingFang SC', serif;
+}
+
+/* ---------- TYPE SIZE (设置 > 外观 > 字号) ----------
+   字号 was drawn as a div with a knob at 40% and the label "100%": a control
+   that could not be dragged and that always read 100%. The whole size scale is
+   six custom properties, so it is now a real choice, applied immediately. */
+:root.thp-scale-90  { --ui-scale: 0.9; }
+:root.thp-scale-100 { --ui-scale: 1; }
+:root.thp-scale-110 { --ui-scale: 1.1; }
+:root.thp-scale-125 { --ui-scale: 1.25; }
+
+/* ---------- COMPACT (设置 > 外观 > 紧凑模式) ----------
+   Also used to be a switch that flipped a boolean nobody read. It tightens the
+   line-height scale and the list entrance stagger, which is what this
+   stylesheet owns; the per-component padding is inline and is not claimed. */
+:root.thp-compact {
+  --lh-body-base: 1.38;
+  --row-stagger: 10ms;
+  --lh-display-lg: 1.12;
+  --lh-display-md: 1.16;
+  --lh-display-sm: 1.2;
+  --lh-body-lg: 1.38;
+  --lh-body: 1.38;
+  --lh-caption: 1.35;
+}
+
+/* ---------- REDUCED MOTION (设置 > 外观 > 减少动效) ----------
+   Was a switch that changed no computed style anywhere. Durations are zeroed
+   rather than animations removed, so a `both`-filled keyframe still lands on its
+   final state instead of snapping back to the pre-animation one. */
+:root.thp-no-motion .thp *,
+:root.thp-no-motion .thp *::before,
+:root.thp-no-motion .thp *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+/* ---------- CORNER RADIUS ----------
+   The 圆角风格 selector in Settings drove nothing: three enabled buttons with
+   no handler, so the app always rendered 标准 no matter which one you pressed.
+   Corner radius is four CSS custom properties and nothing else, so it is the
+   one appearance setting this app can honour entirely on the client. The class
+   goes on <html> (src/lib/radius.tsx) so it survives navigation and applies
+   before first paint. --r-pill is deliberately untouched: a pill is a pill. */
+:root.radius-sharp {
+  --r-sm: 2px;
+  --r-md: 3px;
+  --r-lg: 4px;
+  --r-xl: 5px;
+}
+
+:root.radius-soft {
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
 }
 
 /* ---------- DARK ---------- */
@@ -85,8 +171,8 @@
   font-family: var(--font-sans);
   color: var(--fg-0);
   background: var(--bg-0);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: calc(13px * var(--ui-scale, 1));
+  line-height: var(--lh-body-base);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -170,7 +256,7 @@
   }
 
   .thp .anim-page-in   { animation: thp-page-in var(--duration-mid) var(--ease-out-quart) both; }
-  .thp .anim-row-in    { animation: thp-row-in 200ms var(--ease-out-quart) both; animation-delay: calc(var(--i, 0) * 24ms); }
+  .thp .anim-row-in    { animation: thp-row-in 200ms var(--ease-out-quart) both; animation-delay: calc(var(--i, 0) * var(--row-stagger, 24ms)); }
   .thp .anim-modal-in  { animation: thp-modal-in 180ms var(--ease-spring) both; }
   .thp .anim-backdrop  { animation: thp-backdrop-in var(--duration-fast) linear both; }
   .thp .anim-toast-in  { animation: thp-toast-in var(--duration-mid) var(--ease-spring) both; }
@@ -209,13 +295,22 @@
    v0.7 — TYPE SCALE
    ============================================================ */
 :root {
-  --fs-display-lg: 22px;   --lh-display-lg: 1.2;   --ls-display-lg: -0.018em;
-  --fs-display-md: 18px;   --lh-display-md: 1.25;  --ls-display-md: -0.012em;
-  --fs-display-sm: 15px;   --lh-display-sm: 1.3;   --ls-display-sm: -0.008em;
-  --fs-body-lg:    13.5px; --lh-body-lg:    1.55;
-  --fs-body:       12.5px; --lh-body:       1.55;
-  --fs-caption:    11px;   --lh-caption:    1.5;   --ls-caption: 0.005em;
-  --fs-tag:        10.5px; --lh-tag:        1;     --ls-tag: 0.08em;
+  /* Every size in the scale is multiplied by the user's 字号 choice, so that
+     preference moves the whole interface rather than only the base size. */
+  --fs-display-lg: calc(22px   * var(--ui-scale, 1));
+  --lh-display-lg: 1.2;   --ls-display-lg: -0.018em;
+  --fs-display-md: calc(18px   * var(--ui-scale, 1));
+  --lh-display-md: 1.25;  --ls-display-md: -0.012em;
+  --fs-display-sm: calc(15px   * var(--ui-scale, 1));
+  --lh-display-sm: 1.3;   --ls-display-sm: -0.008em;
+  --fs-body-lg:    calc(13.5px * var(--ui-scale, 1));
+  --lh-body-lg:    var(--lh-body-base);
+  --fs-body:       calc(12.5px * var(--ui-scale, 1));
+  --lh-body:       var(--lh-body-base);
+  --fs-caption:    calc(11px   * var(--ui-scale, 1));
+  --lh-caption:    1.5;   --ls-caption: 0.005em;
+  --fs-tag:        calc(10.5px * var(--ui-scale, 1));
+  --lh-tag:        1;     --ls-tag: 0.08em;
 }
 
 .thp .h-display-lg { font-family: var(--font-display); font-size: var(--fs-display-lg); line-height: var(--lh-display-lg); letter-spacing: var(--ls-display-lg); font-weight: 700; color: var(--fg-0); }
@@ -228,3 +323,62 @@
 
 .thp .cjk:lang(zh), .thp .cjk { letter-spacing: 0.005em; line-height: 1.55; }
 .thp .num { font-family: var(--font-mono); font-feature-settings: 'tnum'; }
+
+/* ============================================================
+   NARROW VIEWPORT
+   The three-column shell is 72 (rail) + 240/256 (sidebar) + 308/320
+   (chat) of chrome that used to be fixed at every width, so below roughly
+   1100px the main column was pushed to nothing while the chat drawer still
+   took a third of the window. These classes are applied where the pages
+   build their layout; the inline widths stay as the wide-viewport value.
+   ============================================================ */
+
+/* Column 2 — the 240/256px sidebar. */
+.thp-col-nav { flex-shrink: 0; }
+
+/* Column 4 — the 308/320px chat / detail drawer. First thing to go: the
+   main content is the reason the window was opened. */
+.thp-col-aside { flex-shrink: 0; }
+
+/* Content column that must be allowed to reach zero rather than force the
+   page wider than the window. */
+.thp-col-main { flex: 1; min-width: 0; }
+
+@media (max-width: 1180px) {
+  .thp-col-aside { display: none; }
+}
+
+@media (max-width: 900px) {
+  .thp-col-nav { width: 200px; }
+}
+
+@media (max-width: 720px) {
+  .thp-col-nav { display: none; }
+}
+
+/* Seat grid: two columns only when there is room for two readable cards.
+   A fixed repeat(2, 1fr) crushed both cards instead. */
+.thp-seat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+
+/* Two-column content grids (profile, settings) that must stack before the
+   side column gets unusable. */
+.thp-split { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
+@media (max-width: 1080px) {
+  .thp-split { grid-template-columns: 1fr; }
+}
+
+/* Room: seats beside the parameter panel side by side, stacked once the two
+   no longer fit. At 1024px the panel's minWidth:320 squeezed the seat column
+   to a sliver -- the panel then painted over the seat cards, and the "席位"
+   heading wrapped one glyph per line. */
+.thp-room-seats { min-width: 0; }
+.thp-room-params { min-width: 320px; }
+@media (max-width: 1320px) {
+  .thp-room-seats,
+  .thp-room-params { flex: 1 1 100% !important; min-width: 0 !important; }
+  .thp-room-params { padding: '0 20px 18px' !important; }
+  .thp-room-params > div { height: auto !important; }
+  .thp-room-body { flex-direction: column !important; overflow-y: auto !important; }
+  .thp-room-seats { overflow: visible !important; }
+}
+

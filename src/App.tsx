@@ -6,19 +6,32 @@ import { Group } from '@/pages/group';
 import { DM } from '@/pages/dm';
 import { ProfileFull, ProfilePopover } from '@/pages/profile';
 import { Settings } from '@/pages/settings';
-import { ToastHost } from '@/components/design/ui';
+import { ToastHost, type ToastItem } from '@/components/design/ui';
+import { useMe } from '@/hooks';
 import { useTheme, type Theme } from '@/lib/theme';
-import { useRoute, type Route } from '@/router';
+import { useRoute, toRoute, type Route } from '@/router';
 
 export type { Theme };
 
-type ToastMsg = { id: number; tone?: string; title: string; body?: string };
+export type ToastMsg = ToastItem;
 
 export default function App() {
   const [route, navigate] = useRoute();
+  // The popover's 消息 button used to navigate to a hardcoded peer, 'yuyuko',
+  // so from any account it opened someone else's DM. The identity has to come
+  // from the same /v1/me the popover itself is showing.
+  const { data: me } = useMe();
   const { theme, setTheme, resolvedTheme } = useTheme();
   const t = resolvedTheme;
   const [toasts, setToasts] = useState<ToastMsg[]>([]);
+
+  // Pages type onNavigate as (target: { name: string; [k: string]: any }) => void,
+  // so the target is not statically a Route. Narrow it once here rather than
+  // casting each page's callback to any.
+  const onNavigate = useCallback(
+    (target: { name: string; [k: string]: unknown }) => navigate(toRoute(target)),
+    [navigate],
+  );
 
   const showToast = useCallback((msg: { tone?: string; title: string; body?: string }) => {
     const id = Date.now() + Math.random();
@@ -38,43 +51,53 @@ export default function App() {
   }, [route.name, navigate]);
 
   return (
-    <div className="relative h-full w-full">
+    // The shell is styled inline, not with `className="relative h-full w-full"`:
+    // those are Tailwind utilities and no stylesheet in this project runs
+    // Tailwind, so they were inert and every page collapsed to content height,
+    // leaving a dead band under it.
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       {route.name === 'lobby' && (
-        <Lobby theme={t} gameId={route.gameId || 'th08'} onNavigate={navigate} onToast={showToast} />
+        <Lobby theme={t} gameId={route.gameId || 'th08'} onNavigate={onNavigate} onToast={showToast} />
       )}
       {route.name === 'room' && (
-        <Room theme={t} state={route.state || 'lobby'} id={route.id} onNavigate={navigate} onToast={showToast} />
+        <Room theme={t} state={route.state || 'lobby'} id={route.id} onNavigate={onNavigate} onToast={showToast} />
       )}
       {route.name === 'group' && (
-        <Group theme={t} handle={route.handle} onNavigate={navigate} onToast={showToast} />
+        <Group theme={t} handle={route.handle} onNavigate={onNavigate} onToast={showToast} />
       )}
       {route.name === 'dm' && (
-        <DM theme={t} view={route.view || 'friends'} peer={route.peer} onNavigate={navigate} onToast={showToast} />
+        <DM theme={t} view={route.view || 'friends'} peer={route.peer} onNavigate={onNavigate} onToast={showToast} />
       )}
       {route.name === 'profile' && !route.popover && (
-        <ProfileFull theme={t} handle={route.handle} onNavigate={navigate} onToast={showToast} />
+        <ProfileFull theme={t} handle={route.handle} onNavigate={onNavigate} onToast={showToast} />
       )}
       {route.name === 'profile' && route.popover && (
         <div style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', background: 'rgba(0,0,0,0.45)', zIndex: 50 }}
              onClick={() => navigate({ name: 'lobby' })}>
           <div onClick={(e) => e.stopPropagation()} className={`thp theme-${t}`}>
-            <ProfilePopover onMessage={() => navigate({ name: 'dm', view: 'dm', peer: 'yuyuko' })} />
+            <ProfilePopover me={me ?? null} onMessage={() => navigate({ name: 'dm', view: 'dm', peer: me?.handle })} />
           </div>
         </div>
       )}
       {route.name === 'settings' && (
         <Settings
           theme={t}
+          selectedTheme={theme}
           section={route.section || 'appear'}
           onClose={() => navigate({ name: 'lobby' })}
-          onSetTheme={(th) => setTheme(th as Theme)}
-          onToast={showToast}
+          onSetTheme={setTheme}
+          onSection={(section) => navigate({ name: 'settings', section })}
         />
       )}
-
       <ToastHost toasts={toasts} onClose={closeToast} />
 
-      <DevSwitcher route={route} onNavigate={navigate} theme={theme} setTheme={setTheme} />
+      {/* Dev-only. It was rendering in the production bundle, floating over the
+          chat composer and duplicating the theme control that Settings already
+          ships. `import.meta.env.DEV` is false in a `vite build`, so the whole
+          component is dropped from the shipped app. */}
+      {import.meta.env.DEV && (
+        <DevSwitcher route={route} onNavigate={navigate} theme={theme} setTheme={setTheme} />
+      )}
     </div>
   );
 }

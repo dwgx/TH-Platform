@@ -8,7 +8,8 @@ type ThemeProviderProps = {
   storageKey?: string;
 };
 
-type Resolved = 'dark' | 'light';
+/** `Theme` with 'system' already collapsed to the theme actually in effect. */
+export type Resolved = 'dark' | 'light';
 
 type ThemeProviderState = {
   theme: Theme;

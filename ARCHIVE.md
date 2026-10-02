@@ -43,6 +43,26 @@ thp: DESYNC detected at session frame 90 (mismatch 1 this session)
 
 `[UNVERIFIED]` 真游戏内行为:最后一次带字段日志的运行被中止,没拿到数据。
 
+### ⚠️ 归档时才发现的:服务端业务逻辑没有接线
+
+**`go test ./...` 全绿,但服务端几乎什么都没接上。**这一点必须写清楚,否则下一个人
+会以为后端已完成。
+
+- 实际注册的路由**只有 5 条**:`/healthz`、`/readyz`、`/metrics`、`/v1`、`/v1/version`
+- `server/internal/{room,friend,group,lobby,chat}/` 五个业务包都有测试且全绿,
+  但**没有一个 HTTP handler 把它们接到路由上**
+- `migrations/` 里有 **18 个 SQL 文件**,但 `sqlc` 生成代码为 0 —— 迁移文件的存在
+  会让「数据库层已完成」这个错觉成立
+- 客户端 `src/lib/api/client.ts` 调用 `/v1/friends`、`/v1/me`、`/v1/lobby/friends`
+  等端点,**这些端点服务端一个都没有**
+
+所以 `AGENTS.md` 第 1 节写的「服务端目前只有 `/healthz` 和 `/v1/version`」在归档时
+**依然为真**,期间写的业务层是「有实现和测试,但未接线」。
+
+这是本项目最典型的无声失败形态:**测试全绿 ≠ 功能存在**。今晚在这上面栽过一次
+(UI 车道报「已清理」实际没删),这里是同一形态的第二次,只是方向相反。
+接线时必须按 `AGENTS.md` 第 6 节的契约表逐条对,不能靠测试通过来推断。
+
 ---
 
 ## 二、能用的东西(不要删)

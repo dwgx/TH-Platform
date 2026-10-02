@@ -379,3 +379,51 @@ vets and tests green, the client type-checks and bundles, the 17 client routes
 match the server field by field, and six of six pages render with a live backend
 in a headless browser. **The DLL gameplay sync is not verified. Postgres has
 never run against a real database. No human has clicked through this.**
+
+---
+
+## 11. Document map
+
+78 markdown files exist across the two repos. This is the only index; most of
+them are dated work logs from parallel lanes. Read them in this order, and only
+when you need them.
+
+### Start here
+
+| Document | What it answers |
+|---|---|
+| [`../ARCHIVE.md`](../ARCHIVE.md) | **Current state, why the project stopped, how to restart it correctly.** Authoritative. |
+| [`METHOD-silent-failures.md`](METHOD-silent-failures.md) | Before debugging anything that "does not work", work through this checklist. Highest-value document here. |
+| [`HANDOFF.md`](HANDOFF.md) | Historical snapshot, superseded. Kept only for the harness-trap log at the bottom. |
+
+### Research and review
+
+| Document | What it answers |
+|---|---|
+| [`../TH08-Platform/docs/research/THP-UPSTREAM-20261002.md`](../TH08-Platform/docs/research/THP-UPSTREAM-20261002.md) | What the two existing implementations do, and why both converge on host≡P1 / guest≡P2. |
+| [`protocol/THP-PROTOCOL-REVIEW-20261002.md`](protocol/THP-PROTOCOL-REVIEW-20261002.md) | 20 defects, 3 design blockers, 7 spec self-contradictions. Saves a restarter from rediscovering them. |
+| [`protocol/SPEC-SYNC-20261002.md`](protocol/SPEC-SYNC-20261002.md) | Spec-vs-header divergence record. |
+| [`protocol/THP-PROTOCOL-v1.md`](protocol/THP-PROTOCOL-v1.md) | The wire format as specified. |
+
+### Debugging method
+
+| Document | What it answers |
+|---|---|
+| [`WORKFLOW-20261002.md`](WORKFLOW-20261002.md) | Reverse-engineering and live-debugging technique; section 7.2 is the measured sync progress ladder. |
+| [`../TH08-Platform/docs/6b_lockstep_audit.md`](../TH08-Platform/docs/6b_lockstep_audit.md) | Wire layout from the decomp. `kExpectedPackSize` is a `static_assert` — do not hand-edit it. |
+| [`../TH08-Platform/docs/reports/THP-BISECT-20261002.md`](../TH08-Platform/docs/reports/THP-BISECT-20261002.md) | The field-level bisect, and the heap-pointer false positive it uncovered. |
+
+### Work logs (`reports/`, `ui/`)
+
+One file per lane, named `THP-<LANE>-<date>.md`. They are a historical record of
+individual tasks, **not** current documentation. Anything they claim about the
+present was true when written, and several were later corrected. Where a lane
+report contradicts `ARCHIVE.md`, `ARCHIVE.md` wins.
+
+Two of them record claims that were false at the time they were made — kept here
+deliberately, because "the report said done and the code disagreed" is the single
+most repeated failure in this project's history:
+
+- `ui/THP-UIWORK-20261002.md` claimed eight fabricated UI rows had been removed.
+  They were still in the source; `ui/THP-FAKEDATA-20261002.md` removed them.
+- `THP-FAKEDATA` then found four more that no brief had listed.

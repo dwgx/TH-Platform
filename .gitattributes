@@ -1,0 +1,50 @@
+# Normalise line endings in the repository, checkout per-platform.
+#
+# Why this file exists: core.autocrlf was set to `true` with no .gitattributes,
+# which made git guess per file and emit "LF will be replaced by CRLF" warnings
+# on every commit. Guessing is how a PowerShell script ends up with LF and a
+# shell script ends up with CRLF, and the second one breaks when run by sh.
+#
+# text=auto lets git detect what is text; the eol rules below then pin the
+# checkout form for the file types where it actually matters.
+
+* text=auto
+
+# Shell scripts MUST be LF or they fail under sh with an invisible error.
+*.sh   text eol=lf
+*.bash text eol=lf
+
+# PowerShell runs on Windows and reads CRLF natively; keep it that way so the
+# file matches what the editor shows.
+*.ps1  text eol=crlf
+*.psm1 text eol=crlf
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+
+# C++ / C / Go / TS sources: repository form is LF, checkout is native.
+*.c    text eol=lf
+*.h    text eol=lf
+*.cpp  text eol=lf
+*.hpp  text eol=lf
+*.go   text eol=lf
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.js   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+
+# Anything that must never be line-ending translated. `git diff` on a renamed
+# binary otherwise shows the whole file as changed.
+*.exe  binary
+*.dll  binary
+*.obj  binary
+*.lib  binary
+*.pdb  binary
+*.png  binary
+*.jpg  binary
+*.ico  binary
+*.dat  binary
+*.woff binary
+*.woff2 binary
+
